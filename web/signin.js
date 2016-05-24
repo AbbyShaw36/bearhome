@@ -1,7 +1,7 @@
 var cookie = require("../util/cookie");
 var serveStatic = require("../util/send").serveStatic;
 
-var signin = {
+exports.signin = {
 	isSignin : function(req) {
 		var isLogin = cookie.getCookie(req,"isLogin");
 

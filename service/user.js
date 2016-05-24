@@ -1,0 +1,5 @@
+exports.User = {
+	signin : function() {
+		
+	}
+}

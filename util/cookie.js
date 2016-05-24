@@ -29,6 +29,7 @@ exports.Cookie = {
 			if (cookies[i].httpOnly) {
 				text += "HttpOnly; ";
 			}
+
 			cookieArray.push(text);
 		}
 		
@@ -44,8 +45,8 @@ exports.Cookie = {
 
 		return Cookies;
 	},
-	getCookie : function(req,name) {
+	getCookie : function(req,key) {
 		var cookies = this.getCookies(req);
-		return cookies[name] || null;
+		return cookies[key] || null;
 	}
 }

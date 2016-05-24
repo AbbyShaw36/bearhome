@@ -3,8 +3,8 @@ var router = require("./router/router");
 var handler = require("./web/handler").handler;
 
 var handle = {
-	"/admin/signin" : function(req,res) {
-		return handler.signin(req,res);
+	"/admin/login" : function(req,res) {
+		return handler.login(req,res);
 	},
 	"/admin" : function() {
 		return handler.admin(req,res);
