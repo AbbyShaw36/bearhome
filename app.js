@@ -1,13 +1,10 @@
 var http = require("http");
 var router = require("./router/router");
-var handler = require("./web/handler").handler;
+var admin_requestPage = require("./web/admin_requestPage");
 
 var handle = {
-	"/admin/login" : function(req,res) {
-		return handler.login(req,res);
-	},
-	"/admin" : function() {
-		return handler.admin(req,res);
+	"/admin" : admin_requestPage.index,
+	"/admin/login" : admin_requestPage.login
 	}
 };
 

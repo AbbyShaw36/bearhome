@@ -1,10 +1,27 @@
-function User(name,password) {
+function User() {}
+
+User.prototype.setName = function(name) {
 	this.name = name;
-	this.password = password;
 }
 
 User.prototype.getName = function() {
 	return this.name;
 }
 
-exports.user = User;
+User.prototype.setPw = function(pw) {
+	this.pw = pw;
+}
+
+User.prototype.getPw = function() {
+	return this.pw;
+}
+
+User.prototype.setId = function(id) {
+	this.id = id;
+}
+
+User.prototype.getId = function() {
+	return this.id;
+}
+
+exports.User = User;
