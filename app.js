@@ -1,10 +1,10 @@
 var http = require("http");
 var router = require("./router/router");
-var admin_requestPage = require("./web/admin_requestPage");
+var admin_account = require("./web/account");
 
 var handle = {
-	"/admin" : admin_requestPage.index,
-	"/admin/login" : admin_requestPage.login
+	"admin/account/signin" : {
+		"POST" : admin_account.signin;
 	}
 };
 

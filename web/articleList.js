@@ -1,6 +1,5 @@
 var getData = require("../util/getData").post;
 var Article = require("../model/article").Article;
-var check = require("./check");
 
 /**
  * 删除文章
@@ -15,25 +14,23 @@ var check = require("./check");
  *  2 : 未登录
  */
 exports.delete = function(req,res) {
-	check.operate(req,res,function() {
-		getData(req,function(data) {
-			var articleArray = data.articleArray;
-			var arr = [];
+	getData(req,function(data) {
+		var articleArray = data.articleArray;
+		var arr = [];
 
-			for (var i = 0; i < articleArray.length; i++) {
-				var article = new Article();
-				article.setId(articleArray[i]);
-				arr.push(article);
+		for (var i = 0; i < articleArray.length; i++) {
+			var article = new Article();
+			article.setId(articleArray[i]);
+			arr.push(article);
+		}
+
+		service.delete(arr,function(err) {
+			if (err) {
+				res.end(err.code);
+				return;
 			}
 
-			service.delete(arr,function(err) {
-				if (err) {
-					res.end(err.code);
-					return;
-				}
-
-				res.end("1");
-			});
+			res.end("1");
 		});
 	});
 }
@@ -51,25 +48,23 @@ exports.delete = function(req,res) {
  *  2 : 未登录
  */
 exports.changeClass = function(req,res) {
-	check.operate(req,res,function() {
-		getData(req,function(data) {
-			var articleArray = data.articleArray;
-			var arr = [];
+	getData(req,function(data) {
+		var articleArray = data.articleArray;
+		var arr = [];
 
-			for (var i = 0; i < articleArray.length; i++) {
-				var article = new Article();
-				article.setId(articleArray[i].id);
-				article.setClass(articleArray[i].class);
+		for (var i = 0; i < articleArray.length; i++) {
+			var article = new Article();
+			article.setId(articleArray[i].id);
+			article.setClass(articleArray[i].class);
+		}
+
+		service.changeClass(arr,function(err) {
+			if (err) {
+				res.end(err.code);
+				return;
 			}
 
-			service.changeClass(arr,function(err) {
-				if (err) {
-					res.end(err.code);
-					return;
-				}
-
-				res.end("1");
-			});
+			res.end("1");
 		});
 	});
 }
