@@ -15,14 +15,24 @@ var cookie = require("../util/cookie");
  * -1 : 请求方式错误;
  *  0 : 请求失败;
  *  1 : 请求成功;
- *  2 : 用户名或密码错误;
- *  3 : 该用户已登录;
+ *  2 : 该用户已登录;
+ *  3 : 提交数据错误
+ *  4 : 用户名或密码错误;
  */
 exports.signin = function(req,res) {
 	// 获取提交数据
 	getData(req,function(data) {
-		user.setName(data.name);
-		user.setPw(sha1(data.pw));
+		var name = data.name;
+		var pw = data.pw;
+
+		// 数据是否存在
+		if (!name || !pw) {
+			res.end("4");
+			return;
+		}
+
+		user.setName(name);
+		user.setPw(sha1(pw));
 
 		// 执行操作
 		service.signin(user,function(err) {
@@ -84,12 +94,22 @@ exports.signout = function(req,res) {
  *  0 : 失败
  *  1 : 成功
  *  2 : 未登录
+ *  3 : 提交数据错误
  */
 exports.signup = function(req,res) {
 	// 获取提交数据
 	getData(req,function(data) {
-		user.setName(data.name);
-		user.setPw(data.pw);
+		var name = data.name;
+		var pw = data.pw;
+
+		// 数据是否存在
+		if (!name || !pw) {
+			res.end("3");
+			return;
+		}
+
+		user.setName(name);
+		user.setPw(pw);
 
 		// 执行操作
 		service.signup(user,function(err) {
@@ -117,12 +137,22 @@ exports.signup = function(req,res) {
  *  0 : 失败
  *  1 : 成功
  *  2 : 未登录
+ *  3 : 提交数据错误
  */
 exports.changePw = function(req,res) {
 	// 获取提交数据
 	getData(req,function(data) {
-		user.setName(data.name);
-		user.setPw(data.pw);
+		var name = data.name;
+		var pw = data.pw;
+
+		// 数据是否存在
+		if (!name || !pw) {
+			res.end("3");
+			return;
+		}
+
+		user.setName(name);
+		user.setPw(pw);
 
 		// 执行操作
 		service.chagnePw(user,function(err) {

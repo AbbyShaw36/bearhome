@@ -1,5 +1,6 @@
 var getData = require("../util/getData").post;
 var Article = require("../model/article").Article;
+var service = require("../service/article");
 
 /**
  * 删除文章
@@ -12,24 +13,37 @@ var Article = require("../model/article").Article;
  *  0 : 失败
  *  1 : 成功
  *  2 : 未登录
+ *  3 : 提交数据错误
  */
 exports.delete = function(req,res) {
+	// 获取提交数据
 	getData(req,function(data) {
 		var articleArray = data.articleArray;
+
+		// 数据是否存在
+		if (!articleArray) {
+			res.end("3");
+			return;
+		}
+
 		var arr = [];
 
+		// 将数据数组转为文章对象数组
 		for (var i = 0; i < articleArray.length; i++) {
 			var article = new Article();
 			article.setId(articleArray[i]);
 			arr.push(article);
 		}
 
+		// 执行删除操作
 		service.delete(arr,function(err) {
+			// 删除失败
 			if (err) {
 				res.end(err.code);
 				return;
 			}
 
+			// 删除成功
 			res.end("1");
 		});
 	});
@@ -46,24 +60,45 @@ exports.delete = function(req,res) {
  *  0 : 失败
  *  1 : 成功
  *  2 : 未登录
+ *  3 : 提交数据错误
  */
 exports.changeClass = function(req,res) {
+	// 获取提交数据
 	getData(req,function(data) {
 		var articleArray = data.articleArray;
-		var arr = [];
 
-		for (var i = 0; i < articleArray.length; i++) {
-			var article = new Article();
-			article.setId(articleArray[i].id);
-			article.setClass(articleArray[i].class);
+		// 数据是否存在
+		if (!articleArray) {
+			res.end("3");
+			return;
 		}
 
+		var arr = [];
+
+		// 将数据数组转为文章对象数组
+		for (var i = 0; i < articleArray.length; i++) {
+			var article = new Article();
+			var id = articleArray[i].id;
+			var classId = articleArray[i].class;
+
+			if (!id || !classId) {
+				res.end("3");
+				return;
+			}
+
+			article.setId(id);
+			article.setClass(classId);
+		}
+
+		// 执行修改操作
 		service.changeClass(arr,function(err) {
+			// 修改成功
 			if (err) {
 				res.end(err.code);
 				return;
 			}
 
+			// 修改失败
 			res.end("1");
 		});
 	});
