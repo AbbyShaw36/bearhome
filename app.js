@@ -1,10 +1,34 @@
 var http = require("http");
 var router = require("./router/router");
-var admin_account = require("./web/account");
+var account = require("./web/account");
 
 var handle = {
 	"admin/account/signin" : {
-		"POST" : admin_account.signin;
+		"POST" : account.signin
+	},
+	"admin/index" : {
+		"GET" : admin.index
+	},
+	"admin/account/signout" : {
+		"POST" : account.signout
+	},
+	"admin/articleList" : {
+		"GET" : admin.articleList
+	},
+	"admin/articleList/delete" : {
+		"POST" : articleList.delete
+	},
+	"admin/articleList/changeClass" : {
+		"POST" : articleList.changeClass
+	},
+	"admin/article" : {
+		"GET" : admin.article
+	},
+	"admin/article/create" : {
+		"POST" : article.create
+	},
+	"admin/article/update" : {
+		"POST" : article.update
 	}
 };
 
