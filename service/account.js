@@ -1,7 +1,8 @@
-var dao = require("../dao/user");
+var accountDao = require("../dao/account");
+var SessionDao = require("../dao/session");
 
 exports.signin = function(user,cb) {
-	dao.getUerByName(user.getName(),user.getPw(),function(err,result) {
+	accountDao.findUerByName(user.getName(),user.getPw(),function(err,result) {
 		// 查询失败
 		if (err) {
 			cb(err);
@@ -10,11 +11,24 @@ exports.signin = function(user,cb) {
 
 		// 没有匹配项，即用户名或密码错误
 		if (result.length === 0) {
-			cb({code:2});
+			cb({code:"4"});
 			return;
 		}
 
-		user.setId(result.insertId);
-		cb(null,result);
+		SessionDao.set(function(sessionId) {
+			user.setSessionId(sessionId);
+		});
 	});
+}
+
+exports.isSignedIn = function(user,cb) {
+	var sessionId = user.getSessionId();
+
+	SessionDao.get(sessionId,cb);
+}
+
+exports.signout = function(user,cb) {
+	var sessionId = user.getSessionId();
+
+	SessionDao.delete(sessionId,cb);
 }

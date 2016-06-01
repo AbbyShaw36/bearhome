@@ -1,4 +1,5 @@
 var http = require("http");
+var mongoose = require("mongoose");
 var router = require("./router/router");
 var account = require("./web/account");
 
@@ -32,6 +33,20 @@ var handle = {
 	}
 };
 
+// 数据库连接
+mongoose.connect("mongodb://localhost/bearhome");
+
+var db = mongoose.connection;
+
+db.on("error",function() {
+	console.log("Fail to connect database!");
+});
+
+db.once("open",function() {
+	console.log("Success to connect database!");
+});
+
+// 服务器监听
 (function (route,handle) {
 	function onRequest(req,res) {
 		var pathname = req.url;

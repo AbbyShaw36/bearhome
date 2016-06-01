@@ -27,7 +27,7 @@ exports.signin = function(req,res) {
 
 		// 数据是否存在
 		if (!name || !pw) {
-			res.end("4");
+			res.end("3");
 			return;
 		}
 

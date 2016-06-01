@@ -6,6 +6,9 @@ exports.middleware = function(req,res,handle,makeSigin) {
 	var sessionId = cookie.getCookie(req,"sessionId");
 	var user = new User();
 
+	// 保存sessionId
+	user.setSessionId(sessionId);
+
 	// 检查是否登陆
 	service.isSignedIn(user,function(result) {
 
@@ -24,9 +27,6 @@ exports.middleware = function(req,res,handle,makeSigin) {
 
 		// 保存登录结果
 		user.setLoginStatus(result);
-
-		// 保存sessionId，供退出使用
-		user.setSessionId(sessionId);
 
 		// 执行相应操作
 		handle(req,res);
