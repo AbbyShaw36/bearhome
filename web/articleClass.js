@@ -1,3 +1,6 @@
+var getData = require("../util/getData").post;
+var ArticleClass = require("../model/articleClass").ArticleClass;
+var service = require("../service/articleClass");
 
 /**
  * 添加分类

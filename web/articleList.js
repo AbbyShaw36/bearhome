@@ -103,3 +103,21 @@ exports.changeClass = function(req,res) {
 		});
 	});
 }
+
+/**
+ * 获取文章列表
+ * @param  {Function} cb callback
+ */
+exports.get = function(cb) {
+	// 执行获取列表操作
+	service.get(function(err,result) {
+		// 操作失败
+		if (err) {
+			cb(err);
+			return;
+		}
+
+		// 操作成功
+		cb(null,result);
+	});
+}

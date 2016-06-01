@@ -100,3 +100,21 @@ exports.update = function(req,res) {
 		});
 	});
 }
+
+/**
+ * 获取文章
+ * @param  {Function} cb callback
+ */
+exports.get = function(cb) {
+	// 执行获取操作
+	service.get(function(err,result) {
+		// 操作失败
+		if (err) {
+			cb(err);
+			return;
+		}
+
+		// 操作成功
+		cb(null,result);
+	});
+}
