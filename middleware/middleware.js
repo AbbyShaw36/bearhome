@@ -8,8 +8,6 @@ exports.middleware = function(req,res,handle,makeSigin) {
 
 	// 检查是否登陆
 	service.isSignedIn(user,function(result) {
-		// 保存登录结果
-		user.setLoginStatus(result);
 
 		// 是否为登录操作
 		if (makeSigin) {
@@ -23,6 +21,12 @@ exports.middleware = function(req,res,handle,makeSigin) {
 			res.end("2");
 			return;
 		}
+
+		// 保存登录结果
+		user.setLoginStatus(result);
+
+		// 保存sessionId，供退出使用
+		user.setSessionId(sessionId);
 
 		// 执行相应操作
 		handle(req,res);
