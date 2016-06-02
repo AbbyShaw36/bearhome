@@ -40,7 +40,7 @@ exports.create = function(req,res) {
 		service.create(article,function(err) {
 			// 操作失败
 			if (err) {
-				res.end(err.code);
+				res.end("0");
 				return;
 			}
 
@@ -91,7 +91,7 @@ exports.update = function(req,res) {
 		service.update(article,function(err) {
 			// 操作失败
 			if (err) {
-				res.end(err.code);
+				res.end("0");
 				return;
 			}
 
@@ -105,9 +105,9 @@ exports.update = function(req,res) {
  * 获取文章
  * @param  {Function} cb callback
  */
-exports.get = function(cb) {
+exports.get = function(article,cb) {
 	// 执行获取操作
-	service.get(function(err,result) {
+	service.getArticle(article,function(err,result) {
 		// 操作失败
 		if (err) {
 			cb(err);

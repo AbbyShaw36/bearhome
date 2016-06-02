@@ -15,7 +15,7 @@ var service = require("../service/articleClass");
  *  2 : 未登录
  *  3 : 提交数据错误
  */
-exports.add = function(req,res) {
+exports.create = function(req,res) {
 	// 获取提交数据
 	getData(req,function(data) {
 		var name = data.name;
@@ -31,10 +31,10 @@ exports.add = function(req,res) {
 		articleClass.setName(name);
 
 		// 执行添加操作
-		service.add(articleClass,function(err) {
+		service.create(articleClass,function(err) {
 			// 操作失败
 			if (err) {
-				res.end(err.code);
+				res.end("0");
 				return;
 			}
 
@@ -58,7 +58,7 @@ exports.add = function(req,res) {
  *  2 : 未登录
  *  3 : 提交数据错误
  */
-exports.change = function(req,res) {
+exports.update = function(req,res) {
 	// 获取提交数据
 	getData(req,function(data) {
 		var id = data.id;
@@ -76,10 +76,10 @@ exports.change = function(req,res) {
 		articleClass.setName(name);
 
 		// 执行修改操作
-		service.change(articleClass,function(err) {
+		service.update(articleClass,function(err) {
 			// 操作失败
 			if (err) {
-				res.end(err.code);
+				res.end("0");
 				return;
 			}
 
@@ -121,7 +121,7 @@ exports.delete = function(req,res) {
 		service.delete(articleClass,function(err) {
 			// 操作失败
 			if (err) {
-				res.end(err.code);
+				res.end("0");
 				return;
 			}
 
@@ -129,4 +129,8 @@ exports.delete = function(req,res) {
 			res.end("1");
 		});
 	});
+}
+
+exports.get = function(conditions,cb) {
+	service.get(conditions,cb);
 }

@@ -1,9 +1,10 @@
 var getData = require("../util/getData").post;
 var Article = require("../model/article").Article;
+var ArticleList = require("../model/articleList").ArticleList;
 var service = require("../service/article");
 
 /**
- * 删除文章
+ * 删除文章，可同时删除多个
  * @param  {obj} req request
  * @param  {obj} res response
  * 提交数据：
@@ -39,7 +40,7 @@ exports.delete = function(req,res) {
 		service.delete(arr,function(err) {
 			// 删除失败
 			if (err) {
-				res.end(err.code);
+				res.end("0");
 				return;
 			}
 
@@ -50,7 +51,7 @@ exports.delete = function(req,res) {
 }
 
 /**
- * 修改文章分类
+ * 修改文章分类，可同时修改多个
  * @param  {obj} req request
  * @param  {obj} res response
  * 提交数据：
@@ -92,13 +93,13 @@ exports.changeClass = function(req,res) {
 
 		// 执行修改操作
 		service.changeClass(arr,function(err) {
-			// 修改成功
+			// 修改失败
 			if (err) {
-				res.end(err.code);
+				res.end("0");
 				return;
 			}
 
-			// 修改失败
+			// 修改成功
 			res.end("1");
 		});
 	});
@@ -108,16 +109,7 @@ exports.changeClass = function(req,res) {
  * 获取文章列表
  * @param  {Function} cb callback
  */
-exports.get = function(cb) {
-	// 执行获取列表操作
-	service.get(function(err,result) {
-		// 操作失败
-		if (err) {
-			cb(err);
-			return;
-		}
-
-		// 操作成功
-		cb(null,result);
-	});
+exports.getArticleList = function(articleList,cb) {
+	// 执行获取操作
+	service.getArticleList(articleList,cb);
 }
