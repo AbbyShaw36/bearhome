@@ -1,6 +1,8 @@
 var model = require("./model");
 
-exports.findByNameAndPw = function(name,pw,cb) {
+exports.findByNameAndPw = function(user,cb) {
+	var name = user.getName();
+	var pw = user.getPw();
 	var Account = model.Account;
 	Account.findOne({name : name, password: pw},function(err,result) {
 		if (err) {

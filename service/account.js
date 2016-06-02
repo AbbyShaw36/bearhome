@@ -2,7 +2,7 @@ var accountDao = require("../dao/account");
 var SessionDao = require("../dao/session");
 
 exports.signin = function(user,cb) {
-	accountDao.findUerByName(user.getName(),user.getPw(),function(err,result) {
+	accountDao.findByNameAndPw(user,function(err,result) {
 		// 查询失败
 		if (err) {
 			cb(err);
