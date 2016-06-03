@@ -1,8 +1,116 @@
 var sha1 = require("sha1");
 var User = require("../model/user").User;
 var service = require("../service/account");
-var getData = require("../util/getData").post;
+var getData = require("../util/getData");
+var getDataByBody = getData.byBody;
+var getDataByURL = getData.byURL;
 var cookie = require("../util/cookie");
+var resErr = require("../util/resErr").ResErr;
+var endString = "";
+
+/**
+ * 获取用户数
+ * @param  {obj} req request
+ * @param  {obj} res response
+ */
+exports.getCount = function(req,res) {
+	// 执行获取操作
+	service.getCount(function(err,result) {
+		// 获取失败
+		if (err) {
+			res.statusCode = 500;
+			res.end();
+			return;
+		}
+
+		// 获取成功
+		endString = JSON.stringify({
+			count: result
+		});
+
+		res.statusCode = 200;
+		res.end(endString);
+	});
+}
+
+/**
+ * 获取用户信息
+ * @param  {obj} req request
+ * @param  {obj} res response
+ * 提交数据：
+ * id : 用户id
+ */
+exports.getUserById = function(req,res) {
+	// 获取提交数据
+	getDataByURL(req,function(data) {
+		var id = data.id;
+
+		// 执行操作必要信息是否存在
+		if (!id) {
+			resErr["400"](res);
+			return;
+		}
+
+		// 创建user对象
+		var user = new User();
+		user.setId(id);
+
+		// 执行获取操作
+		service.getUserById(user,function(err,result) {
+			// 操作失败
+			if (err) {
+				res.statusCode = 500;
+				res.end();
+				return;
+			}
+
+			// 查询用户不存在
+			if (result.length === 0) {
+				resErr["404"](res);
+				return;
+			}
+
+			// 查询成功
+			endString = JSON.stringify({
+				user: result[0]
+			});
+
+			res.statusCode = 200;
+			res.end(endString);
+		});
+	});
+}
+
+/**
+ * 获取所有账户
+ * @param  {obj} req request
+ * @param  {obj} res response
+ */
+exports.getAll = function(req,res) {
+	// 执行操作
+	service.getAll(function(err,result) {
+		// 操作失败
+		if (err) {
+			res.statusCode = 500;
+			res.end();
+			return;
+		}
+
+		// 查询结果为空
+		if (result.length === 0) {
+			resErr["404"](res);
+			return;
+		}
+
+		// 查询成功
+		endString = JSON.stringify({
+			users: result
+		});
+
+		res.statusCode = 200;
+		res.end(endString);
+	});
+}
 
 /**
  * 登录
@@ -11,26 +119,21 @@ var cookie = require("../util/cookie");
  * 提交数据：
  * name : 用户名
  *  pw  : 密码
- * 返回代码：
- * -1 : 请求方式错误;
- *  0 : 请求失败;
- *  1 : 请求成功;
- *  2 : 该用户已登录;
- *  3 : 提交数据错误
- *  4 : 用户名或密码错误;
  */
 exports.signin = function(req,res) {
 	// 获取提交数据
-	getData(req,function(data) {
+	getDataByBody(req,function(data) {
 		var name = data.name;
 		var pw = data.pw;
 
 		// 数据是否存在
 		if (!name || !pw) {
-			res.end("3");
+			resErr["400"](res);
 			return;
 		}
 
+		// 创建user对象
+		var user = new User();
 		user.setName(name);
 		user.setPw(sha1(pw));
 
@@ -38,7 +141,16 @@ exports.signin = function(req,res) {
 		service.signin(user,function(err) {
 			// 登录失败
 			if (err) {
-				res.end(err.code);
+				res.statusCode = 500;
+				res.end();
+				return;
+			}
+
+			var id = user.getSessionId();
+
+			// 用户不存在
+			if (!id) {
+				resErr["400"](res);
 				return;
 			}
 
@@ -46,14 +158,15 @@ exports.signin = function(req,res) {
 			var cookies = [
 				{
 					key : "sessionId",
-					value : user.getSessionId(),
+					value : id,
 					path : "/",
 					httpOnly : true
 				}
 			];
 
 			cookie.setCookie(res,cookies);
-			res.end("1");
+			res.statusCode = 200;
+			res.end();
 		});
 	});
 }
@@ -69,16 +182,27 @@ exports.signin = function(req,res) {
  *  2 : 未登录
  */
 exports.signout = function(req,res) {
-	// 执行操作
-	service.signout(user,function(err) {
-		// 退出失败
-		if (err) {
-			res.end(err.code);
+	getDataByURL(req,function(data) {
+		var id = data.id;
+
+		if (!id) {
+			resErr["400"](res);
 			return;
 		}
 
-		// 退出成功
-		res.end("1");
+		// 执行操作
+		service.signout(user,function(err) {
+			// 退出失败
+			if (err) {
+				res.statusCode = 500;
+				res.end();
+				return;
+			}
+
+			// 退出成功
+			res.statusCode = 200;
+			res.end();
+		});
 	});
 }
 
@@ -98,16 +222,17 @@ exports.signout = function(req,res) {
  */
 exports.signup = function(req,res) {
 	// 获取提交数据
-	getData(req,function(data) {
+	getDataByBody(req,function(data) {
 		var name = data.name;
 		var pw = data.pw;
 
 		// 数据是否存在
 		if (!name || !pw) {
-			res.end("3");
+			resErr["400"](res);
 			return;
 		}
 
+		var user = new User();
 		user.setName(name);
 		user.setPw(pw);
 
@@ -115,18 +240,20 @@ exports.signup = function(req,res) {
 		service.signup(user,function(err) {
 			// 注册失败
 			if (err) {
-				res.end(err.code);
+				res.statusCode = 500;
+				res.end();
 				return;
 			}
 
 			// 注册成功
-			res.end("1");
+			res.statusCode = 200;
+			res.end();
 		});
 	});
 }
 
 /**
- * 修改密码
+ * 修改
  * @param  {[obj]} req [request]
  * @param  {[obj]} res [response]
  * 提交数据：
@@ -139,23 +266,25 @@ exports.signup = function(req,res) {
  *  2 : 未登录
  *  3 : 提交数据错误
  */
-exports.changePw = function(req,res) {
+exports.update = function(req,res) {
 	// 获取提交数据
 	getData(req,function(data) {
+		var id = data.id;
 		var name = data.name;
 		var pw = data.pw;
 
 		// 数据是否存在
-		if (!name || !pw) {
+		if (!id || !name || !pw) {
 			res.end("3");
 			return;
 		}
 
+		user.setId(id);
 		user.setName(name);
 		user.setPw(pw);
 
 		// 执行操作
-		service.chagnePw(user,function(err) {
+		service.update(user,function(err) {
 			// 修改失败
 			if (err) {
 				res.end(err.code);
@@ -166,4 +295,10 @@ exports.changePw = function(req,res) {
 			res.end("1");
 		});
 	});
+}
+
+exports.delete = function(req,res) {
+	getData(req,function(data) {
+
+	})
 }

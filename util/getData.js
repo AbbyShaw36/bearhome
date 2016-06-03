@@ -1,7 +1,7 @@
 var querystring = require("querystring");
 var url = require("url");
 
-exports.post = function(req,cb) {
+exports.byBody = function(req,cb) {
 	var data = "";
 	
 	req.addListener("data",function(chunk) {
@@ -23,7 +23,7 @@ exports.post = function(req,cb) {
 	}
 }
 
-exports.get = function(req,cb) {
+exports.byURL = function(req,cb) {
 	var data = url.parse(req.url,true).query;
 
 	cb(data);

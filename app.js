@@ -1,17 +1,29 @@
 var http = require("http");
 var mongoose = require("mongoose");
 var router = require("./router/router");
+var admin = require("./web/admin");
 var account = require("./web/account");
+var articleList = require("./web/articleList");
+var article = require("./web/article");
 
 var handle = {
-	"admin/account/signin" : {
-		"POST" : account.signin
+	"admin/account/getCount" : {
+		"GET" : account.getCount
 	},
-	"admin/index" : {
-		"GET" : admin.index
+	"admin/account/getUserById" : {
+		"GET" : account.getUserById
+	},
+	"admin/account/signin" : {
+		"GET" : account.signin
+	},
+	"admin/account/signup" : {
+		"POST" : account.signup
 	},
 	"admin/account/signout" : {
-		"POST" : account.signout
+		"DELETE" : account.signout
+	},
+	"admin/account/delete" : {
+		"DELETE" : account.delete
 	},
 	"admin/articleList" : {
 		"GET" : admin.articleList

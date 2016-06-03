@@ -3,34 +3,33 @@ var Session = require("./model").Session;
 exports.set = function(cb) {
 	var session = new Session({ isSignedIn : true});
 
-	session.save(function(err,session) {
+	session.save(function(err,result) {
 		if (err) {
-			cb({code: "0"});
-			return;
+			console.log("[Save session err] - " + err.message);
 		}
 
-		cb(session.id);
+		cb(err,result);
 	});
 }
 
 exports.get = function(id,cb) {
-	Session.findById(id,function(err,session) {
+	Session.findById(id,function(err,result) {
 		if (err) {
-			console.log("[Get session err] - :" + err.message);
-			return;
+			console.log("[Get session err] - " + err.message);
 		}
 
-		cb(session.isSignedIn);
+		cb(err,result);
 	});
 }
 
 exports.delete = function(id,cb) {
-	Session.remove({id: id},function(err) {
+	Session.remove({_id: id},function(err,result) {
 		if (err) {
-			cb({code: "0"});
+			console.log("[Remove session err] - " + err.message);
+			cb(err);
 			return;
 		}
 
-		cb(null);
-	})
+		cb(err,result);
+	});
 }
