@@ -4,6 +4,8 @@ exports.count = function(conditions,cb) {
 	Article.count(conditions,function(err,result) {
 		if (err) {
 			console.log("[Count article err] - " + err.message);
+			cb({type: "serviceError"});
+			return;
 		}
 
 		cb(err,result);
@@ -27,6 +29,8 @@ exports.create = function(article,cb) {
 	article.save(function(err,result) {
 		if (err) {
 			console.log("[Save article err] - " + err.message);
+			cb({type: "serviceError"});
+			return;
 		}
 
 		cb(err,result);
@@ -37,6 +41,8 @@ exports.delete = function(arr,cb) {
 	Article.remove({_id: {$in: arr}},function(err,result) {
 		if (err) {
 			console.log("[Remove article err] - " + err.message);
+			cb({type: "serviceError"});
+			return;
 		}
 
 		cb(err,result);
@@ -49,6 +55,8 @@ exports.get = function(article,cb) {
 	Article.find({_id: id},function(err,result) {
 		if (err) {
 			console.log("[Find article err] - " + err.message);
+			cb({type: "serviceError"});
+			return;
 		}
 
 		cb(err,result);
@@ -63,6 +71,8 @@ exports.getList = function(articleList,cb) {
 	Article.find(conditions,null,{skip: (page-1) * limit, limit : limit},function(err,result) {
 		if (err) {
 			console.log("[Find articles err] - " + err.message);
+			cb({type: "serviceError"});
+			return;
 		}
 
 		cb(err,result);
@@ -76,7 +86,10 @@ exports.changeClass = function(arr,cb) {
 		Article.update({id: obj.id},{$set: {class: obj.class}},function(err,result) {
 			if (err) {
 				console.log("[Update article err] - " + err.message);
+				cb({type: "serviceError"});
+				return;
 			}
+			
 			resultArr.push(result);
 		});
 	});
@@ -93,6 +106,8 @@ exports.update = function(article,cb) {
 	Article.update({_id : id},{title: title, class: className, content: content},function(err,result) {
 		if (err) {
 			console.log("[Update article err] - " + err.message);
+			cb({type: "serviceError"});
+			return;
 		}
 
 		cb(err,result);

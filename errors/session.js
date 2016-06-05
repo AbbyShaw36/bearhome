@@ -1,0 +1,1 @@
+exports.accountNotSignedIn = {type: "ResourceNotFound", discription: "Account not signed in"};

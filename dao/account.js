@@ -1,63 +1,135 @@
-var model = require("./model");
+var connection = require("./mysql").connection;
+var commonErr = require("../errors/common");
+var error = require("../errors/account");
+var dao = {};
 
-exports.count = function(cb) {
-	Account.count({},function(err,result) {
+dao.count = function(cb) {
+	var queryText = "SELECT COUNT(*) FROM account";
+
+	connection.query(queryText,function(err,result) {
+		var retErr = null;
+
 		if (err) {
-			console.log("[Count account err] - " + err.message);
+			retErr = commonErr.internalServerErr;
 		}
 
-		cb(err,result);
+		cb(retErr,result);
 	});
 }
 
-exports.find = function(condition,cb) {
-	Account.find(condition,function(err,result) {
+dao.findById = function(id,cb) {
+	var queryText = util.format("SELECT * FROM account WHERE id = %d",id);
+
+	connection.query(queryText,function(err,result) {
+		var retErr = null;
+
 		if (err) {
-			console.log("[Find account err] - " + err.message);
+			retErr = commonErr.internalServerErr;
 		}
 
-		cb(err,result);
+		cb(retErr,result);
 	});
 }
 
-exports.create = function(user,cb) {
+dao.findAll = function(cb) {
+	var queryText = "SELECT * FROM account";
+
+	connection.query(queryText,function(err,result) {
+		var retErr = null;
+
+		if (err) {
+			retErr = commonErr.internalServerErr;
+		}
+
+		cb(retErr,result);
+	});
+}
+
+dao.findByNameAndPw = function(user,cb) {
+	var name = user.getName();
+	var password = user.getPw();
+	var queryText = util.format("SELECT * FROM account WHERE name = '%s' AND password = '%s'",name,password);
+
+	connection.query(queryText,function(err,result) {
+		var retErr = null;
+
+		if (err) {
+			retErr = commonErr.internalServerErr;
+		}
+
+		cb(retErr,result);
+	});
+}
+
+dao.create = function(user,cb) {
 	var name = user.getName();
 	var password = user.getPw();
 	var isAdmin = user.getIsAdmin();
-	var account = new Account({name: name, password: password, isAdmin: isAdmin});
+	var queryText = util.format("INSERT INTO account(name, password, isAdmin) VALUES('%s','%s',%d)",name,password,isAdmin);
 
-	account.save(function(err,result) {
+	connection.query(queryText,function(err,result) {
+		var retErr = null;
+
 		if (err) {
-			console.log("[Save account err] - " + err.message);
+			if (err.code === "1062") {
+				retErr = error.usernameAlreadyExists;
+			} else {
+				retErr = commonErr.internalServerErr;
+			}
 		}
 
-		cb(err,result);
+		cb(retErr);
 	});
 }
 
-exports.update = function(user,cb) {
+dao.update = function(user,cb) {
 	var id = user.getId();
 	var name = user.getName();
 	var password = user.getPw();
 	var isAdmin = user.getIsAdmin();
+	var queryText = "UPDATE account SET";
 
-	Account.update({_id: id},{name: name, password: password, isAdmin: isAdmin},function(err,result) {
+	if (name) {
+		queryText += " name = '" + name + "'";
+	}
+
+	if (password) {
+		queryText += " password = '" + password + "'";
+	}
+
+	if (isAdmin) {
+		queryText += " isAdmin = " + isAdmin;
+	}
+
+	queryText += "WHERE id = " + id;
+
+	connection.query(queryText,function(err,result) {
+		var retErr = null;
+
 		if (err) {
-			console.log("[Update account err] - " + err.message);
+			if (err.code === "1062") {
+				retErr = err.usernameAlreadyExists;
+			} else {
+				retErr = commonErr.internalServerErr;
+			}
 		}
 
-		cb(err,result);
+		cb(retErr,result);
 	});
 }
 
-exports.delete = function(user,cb) {
-	var id = user.getId();
+dao.delete = function(id,cb) {
+	var queryText = util.format("DELETE FROM account WHERE id = %d",id);
 
-	Account.remove({_id: id},function(err,result) {
+	connection.query(queryText,function(err,result) {
+		var retErr = null;
+
 		if (err) {
-			console.log("[Remove account err] - " + err.message);
+			retErr = commonErr.internalServerErr;
 		}
 
-		cb(err,result);
+		cb(retErr,result);
 	});
 }
+
+exports.dao = dao;
