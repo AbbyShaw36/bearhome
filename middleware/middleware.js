@@ -1,7 +1,7 @@
 var cookie = require("../util/cookie");
 var service = require("../service/account");
 
-exports.middleware = function(req,res,handle,makeSigin) {
+exports.middleware = function(req,res,handle,makeSignin) {
 	// 创建user对象
 	var sessionId = cookie.getCookie(req,"sessionId");
 	var user = new User();
@@ -13,7 +13,7 @@ exports.middleware = function(req,res,handle,makeSigin) {
 	service.isSignedIn(user,function(result) {
 
 		// 是否为登录操作
-		if (makeSigin) {
+		if (makeSignin) {
 			// 已登录
 			if (result) {
 				res.end("3");
@@ -29,6 +29,22 @@ exports.middleware = function(req,res,handle,makeSigin) {
 		user.setLoginStatus(result);
 
 		// 执行相应操作
-		handle(req,res);
+		handle(req,function(err,result) {
+			if (err) {
+				var statusCode = errStatusCode[err.type];
+
+				if (statusCode) {
+					res.statusCode = statusCode;
+				} else {
+					res.statusCode = 500;
+				}
+
+				res.end();
+				return;
+			}
+
+			res.statusCode = 200;
+			res.end(result);
+		});
 	});
 }

@@ -1,5 +1,7 @@
 var accountDao = require("../dao/account");
 var SessionDao = require("../dao/session");
+var error = require("../errors/account");
+var sessionErr = require("../errors/session");
 
 exports.getCount = function(cb) {
 	accountDao.count(cb);
@@ -7,13 +9,32 @@ exports.getCount = function(cb) {
 
 exports.getById = function(user,cb) {
 	var id = user.getId();
-	var condition = {_id : id};
+	
+	accountDao.findById(id,function(err,result) {
+		var retErr = null;
 
-	accountDao.find(condition,cb);
+		if (err) {
+			retErr = err;
+		} else if (result.length === 0) {
+			retErr = error.userNotExists;
+		}
+
+		cb(err,result);
+	});
 }
 
 exports.getAll = function(cb) {
-	accountDao.find({},cb);
+	accountDao.findAll(function(err,result) {
+		var retErr = null;
+
+		if (err) {
+			retErr = err;
+		} else if (result.length === 0) {
+			retErr = error.userNotExists;
+		}
+
+		cb(err,result);
+	});
 }
 
 exports.signup = function(user,cb) {
@@ -21,35 +42,62 @@ exports.signup = function(user,cb) {
 }
 
 exports.signin = function(user,cb) {
-	var name = user.getName();
-	var password = user.getPw();
-	var condition = {name: name, password: password};
-
-	accountDao.find(condition,function(err,result) {
-		// 查询失败
+	accountDao.findByNameAndPw(user,function(err,result) {
 		if (err) {
 			cb(err);
 			return;
 		}
 
-		// 没有匹配项，即用户名或密码错误
 		if (result.length === 0) {
-			cb(err,{statusCode: 400,err: "invalid_grant", err_description: "invalid username or password"});
+			cb(error.userNotExists);
 			return;
 		}
 
-		SessionDao.set(cb);
+		SessionDao.create(function(err,result) {
+			if (err) {
+				cb(err);
+				return;
+			}
+
+			var sessionId = result.id;
+
+			cb(null,sessionId);
+		});
 	});
 }
 
 exports.signout = function(user,cb) {
-	var sessionId = user.getSessionId();
+	SessionDao.delete(user,function(err,result) {
+		var retErr = null;
 
-	SessionDao.delete(sessionId,cb);
+		if (err) {
+			retErr = err;
+		} else if (result.length === 0) {
+			retErr = sessionErr.accountNotSignedIn;
+		}
+
+		cb(retErr);
+	});
 }
 
 exports.isSignedIn = function(user,cb) {
-	var sessionId = user.getSessionId();
+	SessionDao.get(user,function(err,result) {
+		if (err) {
+			cb(err);
+			return;
+		}
 
-	SessionDao.get(sessionId,cb);
+		if (result.length === 0) {
+			cb(null,false);
+			return;
+		}
+
+		cb(null,true);
+	});
+}
+
+exports.update = function(user,cb) {
+	accountDao.update(user,function(err,result) {
+
+	});
 }

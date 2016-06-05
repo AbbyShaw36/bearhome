@@ -5,49 +5,41 @@ var getData = require("../util/getData");
 var getDataByBody = getData.byBody;
 var getDataByURL = getData.byURL;
 var cookie = require("../util/cookie");
-var resErr = require("../util/resErr").ResErr;
-var endString = "";
+var error = require("../errors/account");
 
 /**
  * 获取用户数
  * @param  {obj} req request
- * @param  {obj} res response
+ * @param  {function} cb callback
  */
-exports.getCount = function(req,res) {
+exports.getCount = function(req,cb) {
 	// 执行获取操作
 	service.getCount(function(err,result) {
 		// 获取失败
 		if (err) {
-			res.statusCode = 500;
-			res.end();
+			cb(err);
 			return;
 		}
 
-		// 获取成功
-		endString = JSON.stringify({
-			count: result
-		});
-
-		res.statusCode = 200;
-		res.end(endString);
+		cb(null,{count: result});
 	});
 }
 
 /**
  * 获取用户信息
  * @param  {obj} req request
- * @param  {obj} res response
+ * @param  {function} cb callback
  * 提交数据：
  * id : 用户id
  */
-exports.getUserById = function(req,res) {
+exports.getById = function(req,cb) {
 	// 获取提交数据
 	getDataByURL(req,function(data) {
 		var id = data.id;
 
 		// 执行操作必要信息是否存在
 		if (!id) {
-			resErr["400"](res);
+			cb(errors.userIdNotProvided);
 			return;
 		}
 
@@ -56,27 +48,13 @@ exports.getUserById = function(req,res) {
 		user.setId(id);
 
 		// 执行获取操作
-		service.getUserById(user,function(err,result) {
-			// 操作失败
+		service.getById(user,function(err,result) {
 			if (err) {
-				res.statusCode = 500;
-				res.end();
+				cb(err);
 				return;
 			}
 
-			// 查询用户不存在
-			if (result.length === 0) {
-				resErr["404"](res);
-				return;
-			}
-
-			// 查询成功
-			endString = JSON.stringify({
-				user: result[0]
-			});
-
-			res.statusCode = 200;
-			res.end(endString);
+			cb(null,{user: result[0]});
 		});
 	});
 }
@@ -84,31 +62,17 @@ exports.getUserById = function(req,res) {
 /**
  * 获取所有账户
  * @param  {obj} req request
- * @param  {obj} res response
+ * @param  {function} cb callback
  */
-exports.getAll = function(req,res) {
+exports.getAll = function(req,cb) {
 	// 执行操作
 	service.getAll(function(err,result) {
-		// 操作失败
 		if (err) {
-			res.statusCode = 500;
-			res.end();
+			cb(err);
 			return;
 		}
 
-		// 查询结果为空
-		if (result.length === 0) {
-			resErr["404"](res);
-			return;
-		}
-
-		// 查询成功
-		endString = JSON.stringify({
-			users: result
-		});
-
-		res.statusCode = 200;
-		res.end(endString);
+		cb(null,{users: result});
 	});
 }
 
@@ -120,7 +84,7 @@ exports.getAll = function(req,res) {
  * name : 用户名
  *  pw  : 密码
  */
-exports.signin = function(req,res) {
+exports.signin = function(req,cb) {
 	// 获取提交数据
 	getDataByBody(req,function(data) {
 		var name = data.name;
@@ -128,7 +92,7 @@ exports.signin = function(req,res) {
 
 		// 数据是否存在
 		if (!name || !pw) {
-			resErr["400"](res);
+			cb(error.nameAndPasswordNotProvided);
 			return;
 		}
 
@@ -138,19 +102,9 @@ exports.signin = function(req,res) {
 		user.setPw(sha1(pw));
 
 		// 执行操作
-		service.signin(user,function(err) {
-			// 登录失败
+		service.signin(user,function(err,result) {
 			if (err) {
-				res.statusCode = 500;
-				res.end();
-				return;
-			}
-
-			var id = user.getSessionId();
-
-			// 用户不存在
-			if (!id) {
-				resErr["400"](res);
+				cb(err);
 				return;
 			}
 
@@ -158,15 +112,14 @@ exports.signin = function(req,res) {
 			var cookies = [
 				{
 					key : "sessionId",
-					value : id,
+					value : result,
 					path : "/",
 					httpOnly : true
 				}
 			];
 
 			cookie.setCookie(res,cookies);
-			res.statusCode = 200;
-			res.end();
+			cb(null,{sessionId: result});
 		});
 	});
 }
@@ -181,28 +134,20 @@ exports.signin = function(req,res) {
  *  1 : 成功
  *  2 : 未登录
  */
-exports.signout = function(req,res) {
+exports.signout = function(req,cb) {
 	getDataByURL(req,function(data) {
 		var id = data.id;
 
 		if (!id) {
-			resErr["400"](res);
+			cb(error.userIdNotProvided);
 			return;
 		}
 
-		// 执行操作
-		service.signout(user,function(err) {
-			// 退出失败
-			if (err) {
-				res.statusCode = 500;
-				res.end();
-				return;
-			}
+		var user = new User();
+		user.setId(id);
 
-			// 退出成功
-			res.statusCode = 200;
-			res.end();
-		});
+		// 执行操作
+		service.signout(user,cb);
 	});
 }
 
@@ -220,35 +165,26 @@ exports.signout = function(req,res) {
  *  2 : 未登录
  *  3 : 提交数据错误
  */
-exports.signup = function(req,res) {
+exports.signup = function(req,cb) {
 	// 获取提交数据
 	getDataByBody(req,function(data) {
 		var name = data.name;
 		var pw = data.pw;
+		var isAdmin = data.isAdmin || false;
 
 		// 数据是否存在
 		if (!name || !pw) {
-			resErr["400"](res);
+			cb(error.nameAndPasswordNotProvided);
 			return;
 		}
 
 		var user = new User();
 		user.setName(name);
 		user.setPw(pw);
+		user.setIsAdmin(isAdmin);
 
 		// 执行操作
-		service.signup(user,function(err) {
-			// 注册失败
-			if (err) {
-				res.statusCode = 500;
-				res.end();
-				return;
-			}
-
-			// 注册成功
-			res.statusCode = 200;
-			res.end();
-		});
+		service.signup(user,cb);
 	});
 }
 
@@ -266,22 +202,24 @@ exports.signup = function(req,res) {
  *  2 : 未登录
  *  3 : 提交数据错误
  */
-exports.update = function(req,res) {
+exports.update = function(req,cb) {
 	// 获取提交数据
-	getData(req,function(data) {
+	getDataByBody(req,function(data) {
 		var id = data.id;
 		var name = data.name;
 		var pw = data.pw;
+		var isAdmin = data.isAdmin || false;
 
 		// 数据是否存在
-		if (!id || !name || !pw) {
-			res.end("3");
+		if (!id) {
+			cb(error.userIdNotProvided);
 			return;
 		}
 
 		user.setId(id);
 		user.setName(name);
 		user.setPw(pw);
+		user.setIsAdmin(isAdmin);
 
 		// 执行操作
 		service.update(user,function(err) {

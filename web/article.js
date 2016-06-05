@@ -1,5 +1,7 @@
 var service = require("../service/article");
-var getData = require("../util/getData").post;
+var getData = require("../util/getData");
+var getDataByBody = getData.byBody;
+var getDataByURL = getData.byURL;
 var Article = require("../model/article").Article;
 
 /**
@@ -10,16 +12,10 @@ var Article = require("../model/article").Article;
  *  title  : 标题
  * content : 内容
  *  class  : 分类
- * 返回数据：
- * -1 : 提交方式错误
- *  0 : 操作失败
- *  1 : 操作成功
- *  2 : 未登录
- *  3 : 提交数据错误
  */
 exports.create = function(req,res) {
 	// 获取提交数据
-	getData(req,function(data) {
+	getDataByBody(req,function(data) {
 		var title = data.title;
 		var content = data.content || "";
 		var classId = data.class;
