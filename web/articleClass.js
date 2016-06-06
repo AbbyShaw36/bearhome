@@ -1,6 +1,9 @@
-var getData = require("../util/getData").post;
+var getData = require("../util/getData");
+var getDataByBody = getData.byBody;
+var getDataByURL = getData.byURL;
 var ArticleClass = require("../model/articleClass").ArticleClass;
 var service = require("../service/articleClass");
+var error = require("../errors/articleClass");
 
 /**
  * 添加分类
@@ -15,14 +18,14 @@ var service = require("../service/articleClass");
  *  2 : 未登录
  *  3 : 提交数据错误
  */
-exports.create = function(req,res) {
+exports.create = function(req,cb) {
 	// 获取提交数据
-	getData(req,function(data) {
+	getDataByBody(req,function(data) {
 		var name = data.name;
 
 		// 数据是否存在
 		if (!name) {
-			res.end("3");
+			cb(error.classNameNotProvided);
 			return;
 		}
 
@@ -31,16 +34,7 @@ exports.create = function(req,res) {
 		articleClass.setName(name);
 
 		// 执行添加操作
-		service.create(articleClass,function(err) {
-			// 操作失败
-			if (err) {
-				res.end("0");
-				return;
-			}
-
-			// 操作成功
-			res.end("1");
-		});
+		service.create(articleClass,cb);
 	});
 }
 
@@ -58,15 +52,20 @@ exports.create = function(req,res) {
  *  2 : 未登录
  *  3 : 提交数据错误
  */
-exports.update = function(req,res) {
+exports.update = function(req,cb) {
 	// 获取提交数据
-	getData(req,function(data) {
+	getDataByBody(req,function(data) {
 		var id = data.id;
 		var name = data.name;
 
 		// 数据是否存在
-		if (!id || !name) {
-			res.end("3");
+		if (!id) {
+			cb(error.classIdNotProvided);
+			return;
+		}
+
+		if (!name) {
+			cb(error.classNameNotProvided);
 			return;
 		}
 
@@ -76,16 +75,7 @@ exports.update = function(req,res) {
 		articleClass.setName(name);
 
 		// 执行修改操作
-		service.update(articleClass,function(err) {
-			// 操作失败
-			if (err) {
-				res.end("0");
-				return;
-			}
-
-			// 操作成功
-			res.end("1");
-		});
+		service.update(articleClass,cb);
 	});
 }
 
@@ -102,14 +92,14 @@ exports.update = function(req,res) {
  *  2 : 未登录
  *  3 : 提交数据错误
  */
-exports.delete = function(req,res) {
+exports.delete = function(req,cb) {
 	// 获取提交数据
-	getData(req,function(data) {
+	getDataByURL(req,function(data) {
 		var id = data.id;
 
 		// 数据是否存在
 		if (!id) {
-			res.end("3");
+			cb(error.classIdNotProvided);
 			return;
 		}
 
@@ -118,19 +108,17 @@ exports.delete = function(req,res) {
 		articleClass.serId(id);
 
 		// 执行删除操作
-		service.delete(articleClass,function(err) {
-			// 操作失败
-			if (err) {
-				res.end("0");
-				return;
-			}
-
-			// 操作成功
-			res.end("1");
-		});
+		service.delete(articleClass,cb);
 	});
 }
 
-exports.get = function(conditions,cb) {
-	service.get(conditions,cb);
+exports.get = function(req,cb) {
+	service.get(function(err,result) {
+		if (err) {
+			cb(err);
+			return;
+		}
+
+		cb(null,{class: result});
+	});
 }

@@ -3,19 +3,7 @@ var commonErr = require("../errors/common");
 var error = require("../errors/account");
 var dao = {};
 
-dao.count = function(cb) {
-	var queryText = "SELECT COUNT(*) FROM account";
-
-	connection.query(queryText,function(err,result) {
-		var retErr = null;
-
-		if (err) {
-			retErr = commonErr.internalServerErr;
-		}
-
-		cb(retErr,result);
-	});
-}
+exports.dao = dao;
 
 dao.findById = function(id,cb) {
 	var queryText = util.format("SELECT * FROM account WHERE id = %d",id);
@@ -97,11 +85,7 @@ dao.update = function(user,cb) {
 		queryText += " password = '" + password + "'";
 	}
 
-	if (isAdmin) {
-		queryText += " isAdmin = " + isAdmin;
-	}
-
-	queryText += "WHERE id = " + id;
+	queryText += " isAdmin = " + isAdmin + "WHERE id = " + id;
 
 	connection.query(queryText,function(err,result) {
 		var retErr = null;
@@ -118,7 +102,8 @@ dao.update = function(user,cb) {
 	});
 }
 
-dao.delete = function(id,cb) {
+dao.delete = function(user,cb) {
+	var id = user.getId();
 	var queryText = util.format("DELETE FROM account WHERE id = %d",id);
 
 	connection.query(queryText,function(err,result) {
@@ -131,5 +116,3 @@ dao.delete = function(id,cb) {
 		cb(retErr,result);
 	});
 }
-
-exports.dao = dao;

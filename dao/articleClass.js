@@ -1,57 +1,69 @@
-var ArticleClass = require("./model").ArticleClass;
+var connection = require("./mysql");
+var commonErr = require("../errors/common");
+var dao = {};
 
-exports.create = function(articleClass,cb) {
+exports.dao = dao;
+
+dao.create = function(articleClass,cb) {
 	var name = articleClass.getName();
-	var articleClass = new ArticleClass({name: name});
+	var queryText = "INSERT INTO articleClass(name) VALUES('" + name + "')";
 
-	articleClass.save(function(err,result) {
+	connection.query(queryText,function(err,result) {
+		var retErr = null;
+
 		if (err) {
-			console.log("[Save article class err] - " + err.message);
-			cb({type: "serviceError"});
-			return;
+			console.log("[INSERT ERR] - " + err.message);
+			retErr = commonErr.internalServerErr;
 		}
 
-		cb(err,result);
+		cb(retErr,result);
 	});
 }
 
-exports.update = function(articleClass,cb) {
+dao.update = function(articleClass,cb) {
 	var id = articleClass.getId();
 	var name = articleClass.getName();
+	var queryText = util.format("UPDATE articleClass SET name = '%s' WHERE id = %d",name,id);
+	
+	connection.query(queryText,function(err,result) {
+		var retErr = null;
 
-	ArticleClass.update({_id: id},{name: name},function(err,result) {
 		if (err) {
-			console.log("[Update article class err] - " + err.message);
-			cb({type: "serviceError"});
-			return;
+			console.log("[UPDATE ERR] - " + err.message);
+			retErr = commonErr.internalServerErr;
 		}
 
-		cb(err,result);
+		cb(retErr,result);
 	});
 }
 
-exports.delete = function(articleClass,cb) {
+dao.delete = function(articleClass,cb) {
 	var id = articleClass.getId();
+	var queryText = "DELETE FROM articleClass WHERE id = " + id;
+	
+	connection.query(queryText,function(err,result) {
+		var retErr = null;
 
-	ArticleClass.remove({_id: id},function(err,result) {
 		if (err) {
-			console.log("[Remove article class err] - " + err.message);
-			cb({type: "serviceError"});
-			return;
+			console.log("[UPDATE ERR] - " + err.message);
+			retErr = commonErr.internalServerErr;
 		}
 
-		cb(err,result);
+		cb(retErr,result);
 	});
 }
 
-exports.get = function(cb) {
-	ArticleClass.find({},function(err,result) {
+dao.get = function(cb) {
+	var queryText = "SELECT * FROM articleClass";
+
+	connection.query(queryText,function(err,result) {
+		var retErr = null;
+
 		if (err) {
-			console.log("[Find article class err] - " + err.message);
-			cb({type: "serviceError"});
-			return;
+			console.log("[SELECT ERR] - " + err.message);
+			retErr = commonErr.internalServerErr;
 		}
 
-		cb(err,result);
+		cb(retErr,result);
 	});
 }

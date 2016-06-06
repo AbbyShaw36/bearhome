@@ -17,10 +17,8 @@ dao.create = function(cb) {
 	});
 }
 
-dao.get = function(user,cb) {
-	var id = user.getSessionId();
-
-	Session.findById(id,function(err,result) {
+dao.get = function(sessionId,cb) {
+	Session.findById(sessionId,function(err,result) {
 		var retErr = null;
 
 		if (err) {
@@ -32,10 +30,8 @@ dao.get = function(user,cb) {
 	});
 }
 
-dao.delete = function(user,cb) {
-	var id = user.getId();
-
-	Session.remove({_id: id},function(err,result) {
+dao.delete = function(sessionId,cb) {
+	Session.remove({_id: sessionId},function(err,result) {
 		var retErr = null;
 
 		if (err) {

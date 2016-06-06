@@ -3,10 +3,6 @@ var SessionDao = require("../dao/session");
 var error = require("../errors/account");
 var sessionErr = require("../errors/session");
 
-exports.getCount = function(cb) {
-	accountDao.count(cb);
-}
-
 exports.getById = function(user,cb) {
 	var id = user.getId();
 	
@@ -80,24 +76,51 @@ exports.signout = function(user,cb) {
 	});
 }
 
-exports.isSignedIn = function(user,cb) {
-	SessionDao.get(user,function(err,result) {
+exports.isSignedIn = function(sessionId,cb) {
+	if (!sessionId) {
+		cb(null,0);
+		return;
+	}
+
+	SessionDao.get(sessionId,function(err,result) {
 		if (err) {
 			cb(err);
 			return;
 		}
 
 		if (result.length === 0) {
-			cb(null,false);
+			cb(null,0);
 			return;
 		}
 
-		cb(null,true);
+		cb(null,1);
 	});
 }
 
 exports.update = function(user,cb) {
 	accountDao.update(user,function(err,result) {
+		var retErr = null;
 
+		if (err) {
+			retErr = err;
+		} else if (result.length === 0) {
+			retErr = error.userNotExists;
+		}
+
+		cb(retErr,result);
+	});
+}
+
+exports.delete = function(user,cb) {
+	accountDao.delete(user,function(err,result) {
+		var retErr = null;
+
+		if (err) {
+			retErr = err;
+		} else if (result.length === 0) {
+			retErr = error.userNotExists;
+		}
+
+		cb(retErr);
 	});
 }

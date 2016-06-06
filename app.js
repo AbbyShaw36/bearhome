@@ -7,9 +7,6 @@ var articleList = require("./web/articleList");
 var article = require("./web/article");
 
 var handle = {
-	"admin/account/getCount" : {
-		"GET" : account.getCount
-	},
 	"admin/account/getUserById" : {
 		"GET" : account.getUserById
 	},

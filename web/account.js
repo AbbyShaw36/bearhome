@@ -8,24 +8,6 @@ var cookie = require("../util/cookie");
 var error = require("../errors/account");
 
 /**
- * 获取用户数
- * @param  {obj} req request
- * @param  {function} cb callback
- */
-exports.getCount = function(req,cb) {
-	// 执行获取操作
-	service.getCount(function(err,result) {
-		// 获取失败
-		if (err) {
-			cb(err);
-			return;
-		}
-
-		cb(null,{count: result});
-	});
-}
-
-/**
  * 获取用户信息
  * @param  {obj} req request
  * @param  {function} cb callback
@@ -222,21 +204,28 @@ exports.update = function(req,cb) {
 		user.setIsAdmin(isAdmin);
 
 		// 执行操作
-		service.update(user,function(err) {
-			// 修改失败
+		service.update(user,function(err,result) {
 			if (err) {
-				res.end(err.code);
+				cb(err);
 				return;
 			}
 
-			// 修改成功
-			res.end("1");
+			cb(null,{user: result});
 		});
 	});
 }
 
-exports.delete = function(req,res) {
+exports.delete = function(req,cb) {
 	getData(req,function(data) {
+		var id = data.id;
 
-	})
+		if (!id) {
+			cb(error.userIdNotProvided);
+			return;
+		}
+
+		user.setId(id);
+
+		service.delete(user,cb);
+	});
 }

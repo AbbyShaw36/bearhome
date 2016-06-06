@@ -1,58 +1,59 @@
 var articleDao = require("../dao/article");
+var error = require("../errors/article");
 
-exports.delete = function(articleArr,cb) {
-	var arr = [];
-
+exports.deleteById = function(articleArr,cb) {
 	for (var i = 0; i < articleArr.length; i++) {
 		var id = articleArr[i].getId();
-		arr.push(id);
-	}
-
-	articleDao.delete(arr,cb);
-}
-
-exports.changeClass = function(articleArr,cb) {
-	var arr = [];
-
-	for (var i = 0; i < articleArr.length; i++) {
-		var article = articleArr[i];
-		arr.push({
-			id: article.getId(),
-			class : article.getClass()
-		});
-	}
-
-	articleDao.changeClass(arr,cb);
-}
-
-exports.getArticleList = function(articleList,cb) {
-	articleDao.count(articleList.getConditions(),function(err,count) {
-		if (err) {
-			cb(err);
-			return;
-		}
-
-		if (count === 0) {
-			cb(null,{
-				articles : [],
-				count : count
-			});
-			return;
-		}
-
-		articleList.setCount(count);
-
-		articleDao.get(articleList,function(err,articles){
+		articleDao.deleteById(id,function(err,result) {
 			if (err) {
 				cb(err);
 				return;
 			}
 
-			cb(null,{
-				articles: articles,
-				count: count
-			});
+			if (result.length === 0) {
+				cb(error.articleNotExists);
+				return;
+			}
 		});
+	}
+
+	cb(null);
+}
+
+exports.deleteByClass = function(articleClass,cb) {
+	articleDao.deleteByClass(articleClass,cb);
+}
+
+exports.changeClass = function(articleArr,cb) {
+	for (var i = 0; i < articleArr.length; i++) {
+		var article = articleArr[i];
+		articleDao.changeClass(article,function(err,result) {
+			if (err) {
+				cb(err);
+				return;
+			}
+
+			if (result.length === 0) {
+				cb(error.articleNotExists);
+				return;
+			}
+		});
+	}
+
+	cb(null);
+}
+
+exports.getList = function(articleList,cb) {
+	articleDao.getList(articleList,function(err,result) {
+		var retErr = null;
+
+		if (err) {
+			retErr = err;
+		} else if (result.length === 0) {
+			retErr = error.articleNotExists;
+		}
+
+		cb(retErr,result);
 	});
 }
 
@@ -61,9 +62,29 @@ exports.create = function(article,cb) {
 }
 
 exports.update = function(article,cb) {
-	articleDao.update(article,cb);
+	articleDao.update(article,function(err,result) {
+		var retErr = null;
+
+		if (err) {
+			retErr = err;
+		} else if (result.length === 0) {
+			retErr = error.articleNotExists;
+		}
+
+		cb(retErr,result);
+	});
 }
 
-exports.getArticle = function(article,cb) {
-	articleDao.getArticle(article,cb);
+exports.get = function(article,cb) {
+	articleDao.get(article,function(err,result) {
+		var retErr = null;
+
+		if (err) {
+			retErr = err;
+		} else if (result.length === 0) {
+			retErr = error.articleNotExists;
+		}
+
+		cb(retErr,result);
+	});
 }

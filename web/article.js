@@ -3,6 +3,7 @@ var getData = require("../util/getData");
 var getDataByBody = getData.byBody;
 var getDataByURL = getData.byURL;
 var Article = require("../model/article").Article;
+var arror = require("../errors/article");
 
 /**
  * 添加文章
@@ -13,7 +14,7 @@ var Article = require("../model/article").Article;
  * content : 内容
  *  class  : 分类
  */
-exports.create = function(req,res) {
+exports.create = function(req,cb) {
 	// 获取提交数据
 	getDataByBody(req,function(data) {
 		var title = data.title;
@@ -21,8 +22,13 @@ exports.create = function(req,res) {
 		var classId = data.class;
 
 		// 数据是否存在
-		if (!title || !classId) {
-			res.end("3");
+		if (!title) {
+			cb(error.articleTitleNotProvided);
+			return;
+		}
+
+		if (!classId) {
+			cb(error.articleClassNotProvided);
 			return;
 		}
 
@@ -33,16 +39,7 @@ exports.create = function(req,res) {
 		article.setClass(classId);
 
 		// 执行创建操作
-		service.create(article,function(err) {
-			// 操作失败
-			if (err) {
-				res.end("0");
-				return;
-			}
-
-			// 操作成功
-			res.end("1");
-		});
+		service.create(article,cb);
 	});
 }
 
@@ -71,8 +68,18 @@ exports.update = function(req,res) {
 		var classId = data.class;
 
 		// 数据是否存在
-		if (!id || !title || !classId) {
-			res.end("3");
+		if (!id) {
+			cb(error.articleIdNotProvided);
+			return;
+		}
+
+		if (!title) {
+			cb(error.articleTitleNotProvided);
+			return;
+		}
+
+		if (!classId) {
+			cb(error.articleClassNotProvided);
 			return;
 		}
 
@@ -84,16 +91,7 @@ exports.update = function(req,res) {
 		article.setClass(classId);
 
 		// 执行更新操作
-		service.update(article,function(err) {
-			// 操作失败
-			if (err) {
-				res.end("0");
-				return;
-			}
-
-			// 操作成功
-			res.end("1");
-		});
+		service.update(article,cb);
 	});
 }
 
@@ -101,16 +99,25 @@ exports.update = function(req,res) {
  * 获取文章
  * @param  {Function} cb callback
  */
-exports.get = function(article,cb) {
-	// 执行获取操作
-	service.getArticle(article,function(err,result) {
-		// 操作失败
-		if (err) {
-			cb(err);
+exports.get = function(req,cb) {
+	getDataByURL(req,function(data) {
+		var id = data.id;
+
+		if (!id) {
+			cb(error.articleIdNotProvided);
 			return;
 		}
 
-		// 操作成功
-		cb(null,result);
+		var article = new Article();
+		article.setId(id);
+
+		service.get(article,function(err,result) {
+			if (err) {
+				cb(err);
+				return;
+			}
+
+			cb(null,{article: result[0]});
+		});
 	});
 }

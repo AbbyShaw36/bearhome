@@ -1,113 +1,128 @@
-var Article = require("./model");
+var connection = require("./mysql").connection;
+var commonErr = require("../errors/common");
+var dao = {};
 
-exports.count = function(conditions,cb) {
-	Article.count(conditions,function(err,result) {
-		if (err) {
-			console.log("[Count article err] - " + err.message);
-			cb({type: "serviceError"});
-			return;
-		}
+exports.dao = dao;
 
-		cb(err,result);
-	});
-}
-
-exports.create = function(article,cb) {
+dao.create = function(article,cb) {
 	var title = article.getTitle();
-	var className = article.getClass();
+	var classId = article.getClass();
 	var content = article.getContent();
-	var imgPath = article.getImgPath();
+	var publishTime = new Date();
+	var queryText = util.format("INSERT INTO article(title,class,content,publishTime) VALUES(%s,%d,%s,%d)",title,classId,content,publishTime);
+	
+	connection.query(queryText,function(err,result) {
+		var retErr = null;
 
-	var article = new Article({
-		title: title,
-		class: className,
-		content: content,
-		publishTime: new Date(),
-		imgPath: imgPath
-	});
-
-	article.save(function(err,result) {
 		if (err) {
-			console.log("[Save article err] - " + err.message);
-			cb({type: "serviceError"});
-			return;
+			console.log("[INSERT ERR] - " + err.message);
+			retErr = commonErr.internalServerErr;
 		}
 
-		cb(err,result);
+		cb(retErr,result);
 	});
 }
 
-exports.delete = function(arr,cb) {
-	Article.remove({_id: {$in: arr}},function(err,result) {
+dao.deleteById = function(id,cb) {
+	var queryText = "DELETE FROM article WHERE id = " + id;
+
+	connection.query(queryText,function(err,result) {
+		var retErr = null;
+
 		if (err) {
-			console.log("[Remove article err] - " + err.message);
-			cb({type: "serviceError"});
-			return;
+			console.log("[DELETE ERR] - " + err.message);
+			retErr = commonErr.internalServerErr;
 		}
 
-		cb(err,result);
+		cb(retErr,result);
 	});
 }
 
-exports.get = function(article,cb) {
+dao.deleteByClass = function(articleClass,cb) {
+	var classId = articleClass.getId();
+	var queryText = "DELETE FROM article WHERE class = " + classId;
+
+	connection.query(queryText,function(err,result) {
+		var retErr = null;
+
+		if (err) {
+			console.log("[DELETE ERR] - " + err.message);
+			retErr = commonErr.internalServerErr;
+		}
+
+		cb(err);
+	});
+}
+
+dao.get = function(article,cb) {
 	var id = article.getId();
+	var queryText = "SELECT * FROM article WHERE id = " + id;
+	
+	connection.query(queryText,function(err,result) {
+		var retErr = null;
 
-	Article.find({_id: id},function(err,result) {
 		if (err) {
-			console.log("[Find article err] - " + err.message);
-			cb({type: "serviceError"});
-			return;
+			console.log("[SELECT ERR] - " + err.message);
+			retErr = commonErr.internalServerErr;
 		}
 
 		cb(err,result);
 	});
 }
 
-exports.getList = function(articleList,cb) {
+dao.getList = function(articleList,cb) {
 	var page = articleList.getPage();
-	var limit = articleList.getLimit();
-	var conditions = articleList.getConditions();
+	var perPage = articleList.getPerPage();
+	var articleClass = articleList.getClass();
+	var queryText = "SELECT * FROM article";
 
-	Article.find(conditions,null,{skip: (page-1) * limit, limit : limit},function(err,result) {
+	if (articleClass) {
+		queryText += " WHERE class = '" + articleClass + "'";
+	}
+
+	queryText += " ORDER BY publishTime DESC LIMIT " + (page - 1) * perPage "," + page * perPage;
+
+	connection.query(queryText,function(err,result) {
+		var retErr = null;
 		if (err) {
-			console.log("[Find articles err] - " + err.message);
-			cb({type: "serviceError"});
-			return;
+			retErr = commonErr.internalServerErr;
+		}
+
+		cb(retErr,result);
+	});
+}
+
+dao.changeClass = function(article,cb) {
+	var id = article.getId();
+	var className = article.getClass();
+	var queryText = util.format("UPDATE article SET className = %d WHERE id = %d",className,id);
+
+	connection.query(queryText,function(err,result) {
+		var retErr = null;
+
+		if (err) {
+			console.log("[UPDATE ERR] - " + err.message);
+			retErr = commonErr.internalServerErr;
 		}
 
 		cb(err,result);
 	});
 }
 
-exports.changeClass = function(arr,cb) {
-	var resultArr = [];
-
-	arr.forEach(function(obj) {
-		Article.update({id: obj.id},{$set: {class: obj.class}},function(err,result) {
-			if (err) {
-				console.log("[Update article err] - " + err.message);
-				cb({type: "serviceError"});
-				return;
-			}
-			
-			resultArr.push(result);
-		});
-	});
-
-	cb(err,resultArr);
-}
-
-exports.update = function(article,cb) {
+dao.update = function(article,cb) {
 	var id = article.getId();
 	var title = article.getTitle();
-	var className = article.getClass();
+	var classId = article.getClass();
 	var content = article.getContent();
+	var publishTime = new Date();
+	var queryText = util.format("UPDATE article SET title = %s, class = %d, content = %s, publishTime = %s WHERE id = %d",title,classId,content,publishTime,id);
 
-	Article.update({_id : id},{title: title, class: className, content: content},function(err,result) {
+	connection.query(queryText,function(err,result) {
+		var retErr = null;
+
 		if (err) {
-			console.log("[Update article err] - " + err.message);
-			cb({type: "serviceError"});
-			return;
+			console.log("[UPDATE ERR] - " + err.message);
+			retErr = commonErr.internalServerErr;
 		}
 
 		cb(err,result);

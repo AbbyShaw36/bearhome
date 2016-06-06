@@ -1,7 +1,10 @@
-var getData = require("../util/getData").post;
+var getData = require("../util/getData");
+var getDataByBody = getData.byBody;
+var getDataByURL = getData.byURL;
 var Article = require("../model/article").Article;
 var ArticleList = require("../model/articleList").ArticleList;
 var service = require("../service/article");
+var error = require("../errors/article");
 
 /**
  * 删除文章，可同时删除多个
@@ -16,14 +19,14 @@ var service = require("../service/article");
  *  2 : 未登录
  *  3 : 提交数据错误
  */
-exports.delete = function(req,res) {
+exports.delete = function(req,cb) {
 	// 获取提交数据
-	getData(req,function(data) {
+	getDataByURL(req,function(data) {
 		var articleArray = data.articleArray;
 
 		// 数据是否存在
 		if (!articleArray) {
-			res.end("3");
+			cb(error.articlesNotProvided);
 			return;
 		}
 
@@ -37,16 +40,7 @@ exports.delete = function(req,res) {
 		}
 
 		// 执行删除操作
-		service.delete(arr,function(err) {
-			// 删除失败
-			if (err) {
-				res.end("0");
-				return;
-			}
-
-			// 删除成功
-			res.end("1");
-		});
+		service.deleteById(arr,cb);
 	});
 }
 
@@ -63,14 +57,14 @@ exports.delete = function(req,res) {
  *  2 : 未登录
  *  3 : 提交数据错误
  */
-exports.changeClass = function(req,res) {
+exports.changeClass = function(req,cb) {
 	// 获取提交数据
-	getData(req,function(data) {
+	getDataByBody(req,function(data) {
 		var articleArray = data.articleArray;
 
 		// 数据是否存在
 		if (!articleArray) {
-			res.end("3");
+			cb(error.articlesNotProvided);
 			return;
 		}
 
@@ -82,8 +76,13 @@ exports.changeClass = function(req,res) {
 			var id = articleArray[i].id;
 			var classId = articleArray[i].class;
 
-			if (!id || !classId) {
-				res.end("3");
+			if (!id) {
+				cb(error.articleIdNotProvided);
+				return;
+			}
+
+			if (!classId) {
+				cb(error.articleClassNotProvided);
 				return;
 			}
 
@@ -92,16 +91,7 @@ exports.changeClass = function(req,res) {
 		}
 
 		// 执行修改操作
-		service.changeClass(arr,function(err) {
-			// 修改失败
-			if (err) {
-				res.end("0");
-				return;
-			}
-
-			// 修改成功
-			res.end("1");
-		});
+		service.changeClass(arr,cb);
 	});
 }
 
@@ -109,7 +99,29 @@ exports.changeClass = function(req,res) {
  * 获取文章列表
  * @param  {Function} cb callback
  */
-exports.getArticleList = function(articleList,cb) {
-	// 执行获取操作
-	service.getArticleList(articleList,cb);
+exports.getArticleList = function(req,cb) {
+	getDataByURL(req,function(data) {
+		var page = data.page || 1;
+		var perPage = data.perPage;
+		var articleClass = data.class;
+
+		if (!perPage) {
+			cb(error.perPageNotProvided);
+			return;
+		}
+
+		var articleList = new ArticleList();
+		articleList.setPage(page);
+		articleList.setPerPage(perPage);
+		articleList.setClass(articleClass);
+
+		service.getList(articleList,function(err,result) {
+			if (err) {
+				cb(err);
+				return;
+			}
+
+			cb(null,{articles: result});
+		});
+	});
 }
