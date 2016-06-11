@@ -1,0 +1,13 @@
+-var path = "admin/"
+doctype html
+html
+	head
+		title= title
+		meta(charset="utf-8")
+		link(href= path+"css/public.css")
+		link(href= path+"css/pages.css")
+	body
+		include ./header
+		main#main
+			include ./asideNav
+			block content

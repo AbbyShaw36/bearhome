@@ -1,0 +1,11 @@
+-var active = 0
+-var nav = [{id : 0,title : "文章",href : "admin/articleList"},{id : 1,title : "相册",href : "admin/galleryList"}]
+nav#asideNav
+	ul
+		-for (var i = 0; i < nav.length; i++) 
+			if nav[i].id === active
+				li.active
+					a(href=nav[i].href) nav[i].title
+			else
+				li
+					a(href=nav[i].href) nav[i].title
