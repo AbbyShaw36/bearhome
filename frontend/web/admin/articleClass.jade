@@ -1,0 +1,27 @@
+extends ./layout
+block content
+	// 主体内容开始
+	#mainContent
+		// 顶部导航开始
+		.topNav
+			a(href= path+"articleList") 文章列表
+			span
+			span 文章分类
+		// 顶部导航结束
+		.content
+			.create
+				h3 创建文章分类
+				label
+					span 分类名称
+					input(type="text")
+				input(type="button", value="保存")
+			.update
+				h3 修改文章分类
+				label
+					span 选择分类
+					select
+						option
+				label
+					span 新分类名
+					input(type="text")
+				input(type="button", value="保存")

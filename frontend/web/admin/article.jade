@@ -1,0 +1,40 @@
+extends ./layout
+block content
+	// 主体内容开始
+	#mainContent
+		// 顶部导航开始
+		.topNav
+			a(href= path+"articleList") 文章列表
+			span
+			span 文章
+		// 顶部导航结束
+		.content
+			// 文章表单开始
+			#artcileContent
+				-if (article)
+					label
+						span 标题
+						input(placeholder= article[title])
+					label
+						span 分类
+						select
+							option(id= article[classId]) article[className]
+					label
+						span 内容
+						textarea
+				-else
+					label
+						span 标题
+						input
+					label
+						span 分类
+						select
+							option
+					label
+						span 内容
+						textarea
+				.btnBox
+					input(type="button", value="保存")
+					input(type="button", value="取消")
+			// 文章表单结束
+	// 主体内容结束

@@ -1,5 +1,6 @@
 -var active = 0
 -var nav = [{id : 0,title : "文章",href : "admin/articleList"},{id : 1,title : "相册",href : "admin/galleryList"}]
+// 侧边导航开始
 nav#asideNav
 	ul
 		-for (var i = 0; i < nav.length; i++) 
@@ -9,3 +10,4 @@ nav#asideNav
 			else
 				li
 					a(href=nav[i].href) nav[i].title
+// 侧边导航结束

@@ -1,0 +1,65 @@
+extends ./layout
+-var perpage = 20
+block content
+	// 主体内容开始
+	#mainContent
+		// 顶部导航开始
+		.topNav
+			span 相册
+		// 顶部导航结束
+		.content
+			// 搜索开始
+			.search
+				label
+					span 标题
+					input(type="text")
+				label
+					span 分类
+					select
+						option
+				input(type="button", value="搜索")
+			// 搜索结束
+			.btn
+				input(type="button", value="新增文章")
+				input(type="button", value="修改文章分类")
+				input(type="button", value="管理文章分类")
+			// 文章列表开始
+			-if (articleList.length === 0)
+				p 该栏目还没有文章
+			-else
+				table
+					thead
+						tr
+							th 序号
+							th 标题
+							th 分类
+							th 更新时间
+							th 操作
+					tbody
+						-for (var i = 0; i < articleList.length; i++)
+							tr(id= articleList[id])
+								td= i+1
+								td= articleList[title]
+								td= articleList[className]
+								td= articleList[publishTime]
+								td
+									a(title="编辑")
+									a(title="删除")
+			// 文章列表结束
+			// 分页开始
+			-if (articleList.length > perpage)
+				.pageList
+					ul
+						li 首页
+						li 上一页
+						-var pageNum = 0
+						-if (totalPage < 5)
+							pageNum = totalPage
+						-else
+							pageNum = 5
+						-for (var i = 0; i < pageNum; i++)
+							-if (i === 0)
+								li.active= i+1
+							li= i+1
+			// 分页结束
+	// 主体内容结束
