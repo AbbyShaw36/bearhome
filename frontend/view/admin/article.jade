@@ -18,10 +18,10 @@ block content
 					label
 						span 分类
 						select
-							option(id= article[classId]) article[className]
+							option(id= article[classId])= article[className]
 					label
 						span 内容
-						textarea
+						textarea= article[content]
 				-else
 					label
 						span 标题

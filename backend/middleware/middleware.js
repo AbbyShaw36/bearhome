@@ -44,7 +44,7 @@ exports.middleware = function(req,res,pathname,handle) {
 		if (pathname === "admin/account/signin") {
 			// 已登录
 			if (result) {
-				res.statusCode = 
+				res.statusCode = statusCode.success;
 				return;
 			}
 		} else if (!result) {

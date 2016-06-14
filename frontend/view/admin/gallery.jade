@@ -1,0 +1,23 @@
+extends ./layout
+block content
+	// 主体内容开始
+	#mainContent
+		// 顶部导航开始
+		.topNav
+			a(href= path+"gallery")	相册列表
+			span
+			span 相册
+		// 顶部导航结束
+		.content
+			.title
+				h3 相册：
+					span= gallery.name
+				a(href= path + "gallery") 返回相册列表
+			.imgList
+				ul
+					each item, i in gallery.images
+						li(id= item.id)
+							img(src= item.galleryPath + item.filePath)
+							.btnBox
+								a.delete(href="#", title="删除该图片") 删除
+								a.setCover(href="#", title="设为封面") 封面

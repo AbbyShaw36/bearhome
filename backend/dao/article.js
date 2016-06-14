@@ -80,6 +80,17 @@ dao.getList = function(articleList,cb) {
 		queryText += " WHERE class = '" + articleClass + "'";
 	}
 
+	connection.query(queryText,function(err,result) {
+		if (err) {
+			cb(commonErr.internalServerErr);
+			return;
+		}
+
+		if (result.length === 0) {
+			
+		}
+	});
+
 	queryText += " ORDER BY publishTime DESC LIMIT " + (page - 1) * perPage "," + page * perPage;
 
 	connection.query(queryText,function(err,result) {

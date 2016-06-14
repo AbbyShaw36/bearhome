@@ -1,0 +1,24 @@
+extends ./layout
+block content
+	// 主体内容开始
+	#mainContent
+		// 顶部导航开始
+		.topNav
+			span 相册列表
+		// 顶部导航结束
+		.content
+			.create
+				h3 创建相册
+				div
+					label
+						span 相册名称
+						input(type="text")
+					input(type="button", value="创建")
+			.galleryList
+				ul
+					each item,i in gallerys
+						li(id= item.id)
+							img(src= item.coverPath + item.coverFile)
+							.btnBox
+								a(href="#", title="修改该相册").update 修改
+								a(href= path + "gallery?id=" + item.id, title="进入该相册") 进入
