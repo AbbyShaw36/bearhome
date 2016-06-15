@@ -1,0 +1,12 @@
+{
+	"name" : "bearhome",
+	"version" : "0.0.1",
+	"dependencies" : {
+		"http" : "latest",
+		"mongoose" : "latest",
+		"querystring" : "latest",
+		"url" : "latest",
+		"mysql" : "latest",
+		"sha1" : "latest"
+	}
+}

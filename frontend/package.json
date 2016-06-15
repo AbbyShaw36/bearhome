@@ -1,0 +1,13 @@
+{
+	"name" : "bearhome",
+	"version" : "0.0.1",
+	"dependencies" : {
+		"fs" : "latest",
+		"path" : "latest",
+		"mime" : "latest",
+		"http" : "latest",
+		"jade" : "latest",
+		"querystring" : "latest",
+		"url" : "latest"
+	}
+}

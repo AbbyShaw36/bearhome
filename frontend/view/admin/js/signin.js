@@ -26,7 +26,7 @@ $(function() {
 
 		// 发送请求
 		$.ajax({
-			url : gp.operatePath + "signin",
+			url : gp.operatePath + "account/signin",
 			type : "POST",
 			data : {name: name, password: password},
 			success : function(data, status) {

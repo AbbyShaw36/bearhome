@@ -4,6 +4,7 @@ var mime = require("mime");
 
 exports.serveStatic = function(res,pathname) {
 	var filePath = "./view" + pathname;
+	console.log(filePath);
 	fs.exists(filePath,function(exists){
 		if (exists) {
 			fs.readFile(filePath,function(err, data) {
