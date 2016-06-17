@@ -1,9 +1,13 @@
-var accountDao = require("../dao/account");
-var SessionDao = require("../dao/session");
+var accountDao = require("../dao/account").dao;
+var SessionDao = require("../dao/session").dao;
 var error = require("../errors/account");
 var sessionErr = require("../errors/session");
+var User = require("../model/user").User;
+var service = {};
 
-exports.getById = function(user,cb) {
+exports.service = service;
+
+service.getById = function(user,cb) {
 	var id = user.getId();
 	
 	accountDao.findById(id,function(err,result) {
@@ -19,7 +23,7 @@ exports.getById = function(user,cb) {
 	});
 }
 
-exports.getAll = function(cb) {
+service.getAll = function(cb) {
 	accountDao.findAll(function(err,result) {
 		var retErr = null;
 
@@ -33,11 +37,27 @@ exports.getAll = function(cb) {
 	});
 }
 
-exports.signup = function(user,cb) {
+service.getBySessionId = function(sessionId,cb) {
+	var that = this;
+
+	SessionDao.get(sessionId,function(err,result) {
+		if (err) {
+			cb(err);
+			return;
+		}
+
+		var user = new User();
+		user.setId(result[0].userId);
+
+		that.getById(user,cb);
+	});
+}
+
+service.signup = function(user,cb) {
 	accountDao.create(user,cb);
 }
 
-exports.signin = function(user,cb) {
+service.signin = function(user,cb) {
 	accountDao.findByNameAndPw(user,function(err,result) {
 		if (err) {
 			cb(err);
@@ -45,11 +65,15 @@ exports.signin = function(user,cb) {
 		}
 
 		if (result.length === 0) {
+			console.log("[Sign in error] - User not exists");
 			cb(error.userNotExists);
 			return;
 		}
 
-		SessionDao.create(function(err,result) {
+		console.log("[Sign in user]: ");
+		console.log(result);
+
+		SessionDao.create(result[0],function(err,result) {
 			if (err) {
 				cb(err);
 				return;
@@ -62,7 +86,7 @@ exports.signin = function(user,cb) {
 	});
 }
 
-exports.signout = function(user,cb) {
+service.signout = function(user,cb) {
 	SessionDao.delete(user,function(err,result) {
 		var retErr = null;
 
@@ -76,9 +100,9 @@ exports.signout = function(user,cb) {
 	});
 }
 
-exports.isSignedIn = function(sessionId,cb) {
+service.isSignedIn = function(sessionId,cb) {
 	if (!sessionId) {
-		cb(null,0);
+		cb(null,null);
 		return;
 	}
 
@@ -89,11 +113,11 @@ exports.isSignedIn = function(sessionId,cb) {
 		}
 
 		if (result.length === 0) {
-			cb(null,0);
+			cb(null,null);
 			return;
 		}
 
-		cb(null,1);
+		cb(null,result);
 	});
 }
 

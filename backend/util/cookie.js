@@ -21,7 +21,7 @@ exports.setCookie = function(res,cookies) {
 
 		// domain
 		if (cookies[i].domain) {
-			text += "Domain=" + domain + "; ";
+			text += "Domain=" + cookies[i].domain + "; ";
 		}
 
 		// httpOnly

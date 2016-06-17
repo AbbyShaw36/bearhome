@@ -1,4 +1,4 @@
 var gp = {
-	operatePath : "127.0.0.1:3000/admin/",
-	jumpPath : "127.0.0.1:6666/admin/"
+	operatePath : "http://127.0.0.1:3000/admin/",
+	jumpPath : "http://127.0.0.1:8888/admin/"
 }

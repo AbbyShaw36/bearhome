@@ -1,6 +1,6 @@
 var sha1 = require("sha1");
 var User = require("../model/user").User;
-var service = require("../service/account");
+var service = require("../service/account").service;
 var getData = require("../util/getData");
 var getDataByBody = getData.byBody;
 var getDataByURL = getData.byURL;
@@ -14,7 +14,7 @@ var error = require("../errors/account");
  * 提交数据：
  * id : 用户id
  */
-exports.getById = function(req,cb) {
+exports.getById = function(req,res,cb) {
 	// 获取提交数据
 	getDataByURL(req,function(data) {
 		var id = data.id;
@@ -46,7 +46,7 @@ exports.getById = function(req,cb) {
  * @param  {obj} req request
  * @param  {function} cb callback
  */
-exports.getAll = function(req,cb) {
+exports.getAll = function(req,res,cb) {
 	// 执行操作
 	service.getAll(function(err,result) {
 		if (err) {
@@ -58,6 +58,19 @@ exports.getAll = function(req,cb) {
 	});
 }
 
+exports.getBySessionId = function(req,res,cb) {
+	var sessionId = cookie.getCookie(req,"sessionId");
+
+	service.getBySessionId(sessionId,function(err,result) {
+		if (err) {
+			cb(err);
+			return;
+		}
+
+		cb(null,{user: result[0]});
+	});
+}
+
 /**
  * 登录
  * @param  {[obj]} req [request]
@@ -66,14 +79,15 @@ exports.getAll = function(req,cb) {
  * name : 用户名
  *  pw  : 密码
  */
-exports.signin = function(req,cb) {
+exports.signin = function(req,res,cb) {
 	// 获取提交数据
 	getDataByBody(req,function(data) {
 		var name = data.name;
-		var pw = data.pw;
+		var pw = data.password;
 
 		// 数据是否存在
 		if (!name || !pw) {
+			console.log("[Sign in error] - Name and password not provided");
 			cb(error.nameAndPasswordNotProvided);
 			return;
 		}
@@ -96,7 +110,9 @@ exports.signin = function(req,cb) {
 					key : "sessionId",
 					value : result,
 					path : "/",
-					httpOnly : true
+					httpOnly : true,
+					domain : "127.0.0.1",
+					exdays : 1
 				}
 			];
 
@@ -116,7 +132,7 @@ exports.signin = function(req,cb) {
  *  1 : 成功
  *  2 : 未登录
  */
-exports.signout = function(req,cb) {
+exports.signout = function(req,res,cb) {
 	getDataByURL(req,function(data) {
 		var id = data.id;
 
@@ -147,7 +163,7 @@ exports.signout = function(req,cb) {
  *  2 : 未登录
  *  3 : 提交数据错误
  */
-exports.signup = function(req,cb) {
+exports.signup = function(req,res,cb) {
 	// 获取提交数据
 	getDataByBody(req,function(data) {
 		var name = data.name;
@@ -184,7 +200,7 @@ exports.signup = function(req,cb) {
  *  2 : 未登录
  *  3 : 提交数据错误
  */
-exports.update = function(req,cb) {
+exports.update = function(req,res,cb) {
 	// 获取提交数据
 	getDataByBody(req,function(data) {
 		var id = data.id;
@@ -215,7 +231,7 @@ exports.update = function(req,cb) {
 	});
 }
 
-exports.delete = function(req,cb) {
+exports.delete = function(req,res,cb) {
 	getData(req,function(data) {
 		var id = data.id;
 

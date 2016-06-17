@@ -1,4 +1,8 @@
-function getCookies(req) {
+var cookie = {};
+
+exports.cookie = cookie;
+
+cookie.getCookies = function(req) {
 	var Cookies = {};
 
 	req.headers.cookie && req.headers.cookie.split(';').forEach(function(cookie) {
@@ -9,7 +13,7 @@ function getCookies(req) {
 	return Cookies;
 }
 
-exports.getCookie = function(req,key) {
-	var cookies = getCookies(req);
+cookie.getCookie = function(req,key) {
+	var cookies = this.getCookies(req);
 	return cookies[key] || null;
 }

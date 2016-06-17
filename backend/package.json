@@ -7,6 +7,7 @@
 		"querystring" : "latest",
 		"url" : "latest",
 		"mysql" : "latest",
-		"sha1" : "latest"
+		"sha1" : "latest",
+		"util" : "latest"
 	}
 }

@@ -28,10 +28,18 @@ $(function() {
 		$.ajax({
 			url : gp.operatePath + "account/signin",
 			type : "POST",
-			data : {name: name, password: password},
+			dataType : "json",
+			data : {
+				name: name,
+				password: password
+			},
 			success : function(data, status) {
-				// 处理请求结果
-				switch (status) {
+				console.log(data);
+				console.log(status);
+				location.href = gp.jumpPath + "index.html";
+			},
+			error : function(res) {
+				switch (res.status) {
 					case 400 :
 						$.alert({
 							title : "错误提示",
@@ -50,14 +58,12 @@ $(function() {
 							content : "用户名或密码错误！"
 						});
 						break;
-					case 200 :
-						location.href = jumpPath + "index";
-						break;
 					default :
 						console.log(status);
 						break;
 				}
-			}
+			},
+			xhrFields: {withCredentials: true}
 		});
 	});
 });

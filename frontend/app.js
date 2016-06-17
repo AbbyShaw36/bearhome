@@ -3,6 +3,7 @@ var router = require("./router/router").router;
 var admin = require("./web/admin");
 
 var handle = {
+	"/admin/index.html" : admin.index
 };
 
 (function(router,handle) {

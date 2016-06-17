@@ -6,8 +6,8 @@ nav#asideNav
 		-for (var i = 0; i < nav.length; i++) 
 			if nav[i].id === active
 				li.active
-					a(href=nav[i].href) nav[i].title
+					a(href=nav[i].href)= nav[i].title
 			else
 				li
-					a(href=nav[i].href) nav[i].title
+					a(href=nav[i].href)= nav[i].title
 // 侧边导航结束

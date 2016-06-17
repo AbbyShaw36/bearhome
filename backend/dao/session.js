@@ -2,8 +2,8 @@ var Session = require("./model").Session;
 var commonErr = require("../errors/common");
 var dao = {};
 
-dao.create = function(cb) {
-	var session = new Session({ isSignedIn : true});
+dao.create = function(user,cb) {
+	var session = new Session({userId : user.id});
 
 	session.save(function(err,result) {
 		var retErr = null;
@@ -13,12 +13,13 @@ dao.create = function(cb) {
 			retErr = commonErr.internalServerErr;
 		}
 
+		console.log("[Success create session] - " + result.id);
 		cb(retErr,result);
 	});
 }
 
 dao.get = function(sessionId,cb) {
-	Session.findById(sessionId,function(err,result) {
+	Session.find({_id : sessionId},function(err,result) {
 		var retErr = null;
 
 		if (err) {

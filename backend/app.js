@@ -5,7 +5,10 @@ var account = require("./web/account");
 
 var handle = {
 	"/admin/account/signin" : {
-		"GET" : account.signin
+		"POST" : account.signin
+	},
+	"/admin/account/getBySessionId" : {
+		"GET" : account.getBySessionId
 	}
 };
 

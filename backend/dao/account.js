@@ -1,3 +1,4 @@
+var util = require("util");
 var connection = require("./mysql").connection;
 var commonErr = require("../errors/common");
 var error = require("../errors/account");
@@ -42,6 +43,7 @@ dao.findByNameAndPw = function(user,cb) {
 		var retErr = null;
 
 		if (err) {
+			console.log("[SELECT ERR] - " + err.message);
 			retErr = commonErr.internalServerErr;
 		}
 

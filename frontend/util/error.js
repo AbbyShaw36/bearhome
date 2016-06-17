@@ -1,0 +1,1 @@
+exports.methodNotAllowed = {type: "methodNotAllowed", discription: "Request method not allowed"};
