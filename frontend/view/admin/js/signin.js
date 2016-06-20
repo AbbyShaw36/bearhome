@@ -1,4 +1,21 @@
 $(function() {
+	// 验证是否已登录
+	// $.ajax({
+	// 	url : gp.operatePath + "account/isSignedIn",
+	// 	type : "GET",
+	// 	success : function(data,status) {
+	// 		console.log(data);
+	// 		console.log(status);
+	// 	},
+	// 	error : function(res) {
+	// 		switch (res.status) {
+	// 			case 401 :
+	// 				break;
+	// 		}
+	// 	}
+	// 	// xhrFields: {withCredentials: true}
+	// });
+
 	// 点击提交登录
 	$("#submit").on("click",function() {
 		var name = $.trim($("#signinForm .name input").val());
@@ -33,6 +50,7 @@ $(function() {
 				name: name,
 				password: password
 			},
+			crossDomain: true,
 			success : function(data, status) {
 				console.log(data);
 				console.log(status);
@@ -62,8 +80,7 @@ $(function() {
 						console.log(status);
 						break;
 				}
-			},
-			xhrFields: {withCredentials: true}
+			}
 		});
 	});
 });

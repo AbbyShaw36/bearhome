@@ -111,7 +111,6 @@ exports.signin = function(req,res,cb) {
 					value : result,
 					path : "/",
 					httpOnly : true,
-					domain : "127.0.0.1",
 					exdays : 1
 				}
 			];
@@ -244,4 +243,8 @@ exports.delete = function(req,res,cb) {
 
 		service.delete(user,cb);
 	});
+}
+
+exports.isSignedIn = function(req,res,cb) {
+	cb(null,{isSignedIn : true});
 }

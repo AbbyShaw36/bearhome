@@ -1,3 +1,4 @@
+var logger = require("./logger").logger;
 var cookie = {};
 
 exports.cookie = cookie;
@@ -15,5 +16,9 @@ cookie.getCookies = function(req) {
 
 cookie.getCookie = function(req,key) {
 	var cookies = this.getCookies(req);
-	return cookies[key] || null;
+	var cookie = cookies[key];
+
+	logger.trace("Get a cookie: " + cookie);
+
+	return cookie || null;
 }

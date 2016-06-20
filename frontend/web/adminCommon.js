@@ -1,5 +1,6 @@
 var http = require("http");
 var getData = require("../util/getData").byBody;
+var logger = require("../util/logger").logger;
 
 exports.getUserName = function(req,cb) {
 	var options = {
@@ -18,14 +19,13 @@ exports.getUserName = function(req,cb) {
 
 		getData(res,function(data) {
 			var data = JSON.parse(data);
-			console.log("[getUserName result]");
-			console.log(data);
+			logger.trace("[getUserName result]" + data);
 			cb(null,data.user);
 		});
 	});
 
 	req.on("error",function(err) {
-		console.log(err);
+		logger.error(err.message);
 	});
 
 	req.end();

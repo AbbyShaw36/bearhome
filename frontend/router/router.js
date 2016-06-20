@@ -1,7 +1,8 @@
 var middleware = require("../middleware/middleware").middleware;
+var logger = require("../util/logger").logger;
 
 exports.router = function(req,res,pathname,handle) {
-	console.log("About to route a request for " + pathname);
+	logger.trace("About to route a request for " + pathname);
 
 	if (pathname === "/" || pathname === "/admin/") {
 		pathname += "index";

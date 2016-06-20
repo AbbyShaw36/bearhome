@@ -1,5 +1,6 @@
 var jade = require("jade");
 var common = require("./adminCommon");
+var logger = require("../util/logger").logger;
 
 exports.signin = function(req,cb) {
 	var html = jade.compileFileClient('../view/admin/signin');

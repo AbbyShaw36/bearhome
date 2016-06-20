@@ -1,3 +1,5 @@
+var logger = require("./logger").logger;
+
 exports.setCookie = function(res,cookies) {
 	var cookieArray = [];
 
@@ -33,6 +35,8 @@ exports.setCookie = function(res,cookies) {
 	}
 	
 	res.setHeader("Set-Cookie" , cookieArray);
+
+	logger.trace("Set cookie : " + cookieArray);
 }
 
 exports.getCookies = function(req) {
