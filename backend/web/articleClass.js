@@ -2,7 +2,7 @@ var getData = require("../util/getData");
 var getDataByBody = getData.byBody;
 var getDataByURL = getData.byURL;
 var ArticleClass = require("../model/articleClass").ArticleClass;
-var service = require("../service/articleClass");
+var service = require("../service/articleClass").service;
 var error = require("../errors/articleClass");
 
 /**
@@ -112,13 +112,13 @@ exports.delete = function(req,cb) {
 	});
 }
 
-exports.get = function(req,cb) {
+exports.get = function(req,res,cb) {
 	service.get(function(err,result) {
 		if (err) {
 			cb(err);
 			return;
 		}
 
-		cb(null,{class: result});
+		cb(null,{classList: result});
 	});
 }

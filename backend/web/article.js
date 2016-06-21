@@ -1,4 +1,4 @@
-var service = require("../service/article");
+var service = require("../service/article").service;
 var getData = require("../util/getData");
 var getDataByBody = getData.byBody;
 var getDataByURL = getData.byURL;

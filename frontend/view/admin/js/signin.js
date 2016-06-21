@@ -1,20 +1,17 @@
 $(function() {
 	// 验证是否已登录
-	// $.ajax({
-	// 	url : gp.operatePath + "account/isSignedIn",
-	// 	type : "GET",
-	// 	success : function(data,status) {
-	// 		console.log(data);
-	// 		console.log(status);
-	// 	},
-	// 	error : function(res) {
-	// 		switch (res.status) {
-	// 			case 401 :
-	// 				break;
-	// 		}
-	// 	}
-	// 	// xhrFields: {withCredentials: true}
-	// });
+	$.ajax({
+		url : gp.operatePath + "account/isSignedIn",
+		type : "GET",
+		crossDomain : true,
+		xhrFields: {withCredentials: true},
+		success : function(data,status) {
+			location.href = gp.jumpPath + "index.html";
+		},
+		error : function(res) {
+			console.log(res.status);
+		}
+	});
 
 	// 点击提交登录
 	$("#submit").on("click",function() {
@@ -51,9 +48,8 @@ $(function() {
 				password: password
 			},
 			crossDomain: true,
+			xhrFields: {withCredentials: true},
 			success : function(data, status) {
-				console.log(data);
-				console.log(status);
 				location.href = gp.jumpPath + "index.html";
 			},
 			error : function(res) {

@@ -11,6 +11,7 @@ var getDataByURL = getData.byURL;
 exports.middleware = function(req,res,pathname,handle) {
 	// res.setHeader('Access-Control-Allow-Origin',"127.0.0.1:3000");
 	// res.setHeader('Access-Control-Allow-Credentials', true);
+	// res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
 
 	// 检查请求方式
 	if (req.method !== "GET") {
@@ -23,7 +24,7 @@ exports.middleware = function(req,res,pathname,handle) {
 
 	// 检查静态页面请求
 	if (!handle[pathname]) {
-		logger.warn("The request for " + pathname + " is a static serve");
+		logger.trace("The request for " + pathname + " is a static serve");
 		serveStatic(res,pathname);
 		return;
 	}

@@ -132,19 +132,26 @@ exports.signin = function(req,res,cb) {
  *  2 : 未登录
  */
 exports.signout = function(req,res,cb) {
-	getDataByURL(req,function(data) {
-		var id = data.id;
+	var sessionId = cookie.getCookie(req,"sessionId");
 
-		if (!id) {
-			cb(error.userIdNotProvided);
+	service.signout(sessionId,function(err,result) {
+		if (err) {
+			cb(err);
 			return;
 		}
 
-		var user = new User();
-		user.setId(id);
+		var cookies = [
+			{
+				key : "sessionId",
+				value : "",
+				path : "/",
+				httpOnly : true,
+				maxAge : "0"
+			}
+		];
 
-		// 执行操作
-		service.signout(user,cb);
+		cookie.setCookie(res,cookies);
+		cb(null,null);
 	});
 }
 

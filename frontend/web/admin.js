@@ -1,12 +1,6 @@
 var jade = require("jade");
-var common = require("./adminCommon");
+var common = require("./adminCommon").common;
 var logger = require("../util/logger").logger;
-
-exports.signin = function(req,cb) {
-	var html = jade.compileFileClient('../view/admin/signin');
-
-	cb(null,html);
-}
 
 exports.index = function(req,cb) {
 	common.getUserName(req,function(err,result) {
@@ -33,12 +27,64 @@ exports.index = function(req,cb) {
 }
 
 exports.articleList = function(req,cb) {
-	getArticles(req,function(err,options) {
+	common.getUserName(req,function(err,result) {
 		if (err) {
 			cb(err);
 			return;
 		}
 
-		var html = jade.compileFileClient('../view/admin/articleList',{articleList: articles,});
+		var username = result.name;
+		var perpage = 10;
+
+		common.getArticleList(req,perpage,function(err,result) {
+			if (err) {
+				cb(err);
+				return;
+			}
+
+			var articleList = result;
+
+			var options = {
+				filename: "articleList.html",
+				doctype: "html"
+			};
+
+			var locals = {
+				title: "后台管理系统",
+				username : username,
+				articleList : articleList
+			}
+
+			var fn = jade.compileFile("./view/admin/articleList.jade",options);
+			var html = fn(locals);
+
+			cb(null,html);
+		});
+	});
+}
+
+exports.articleClass = function(req,cb) {
+	common.getUserName(req,function(err,result) {
+		if (err) {
+			cb(err);
+			return;
+		}
+
+		var username = result.name;
+
+		var options = {
+			filename: "articleClass.html",
+			doctype: "html"
+		}
+
+		var locals = {
+			title: "后台管理系统",
+			username : username
+		}
+
+		var fn = jade.compileFile("./view/admin/articleClass.jade",options);
+		var html = fn(locals);
+
+		cb(null,html);
 	});
 }

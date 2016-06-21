@@ -10,6 +10,7 @@
 		"http" : "latest",
 		"jade" : "latest",
 		"querystring" : "latest",
-		"url" : "latest"
+		"url" : "latest",
+		"extend" : "latest"
 	}
 }

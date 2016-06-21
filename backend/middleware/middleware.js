@@ -5,8 +5,15 @@ var error = require("../errors/common");
 var logger = require("../util/logger").logger;
 
 exports.middleware = function(req,res,pathname,handle) {
-	res.setHeader('Access-Control-Allow-Origin',"*");
-	// res.setHeader('Access-Control-Allow-Credentials', true);
+	res.setHeader('Access-Control-Allow-Origin',"http://127.0.0.1:8888");
+	res.setHeader('Access-Control-Allow-Credentials', true);
+	res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+
+	if (req.method === "OPTIONS") {
+		res.statusCode = statusCode.success;
+		res.end();
+		return;
+	}
 
 	// 没有对应操作
 	if (typeof handle[pathname] !== "object") {

@@ -86,8 +86,8 @@ service.signin = function(user,cb) {
 	});
 }
 
-service.signout = function(user,cb) {
-	SessionDao.delete(user,function(err,result) {
+service.signout = function(sessionId,cb) {
+	SessionDao.delete(sessionId,function(err,result) {
 		var retErr = null;
 
 		if (err) {

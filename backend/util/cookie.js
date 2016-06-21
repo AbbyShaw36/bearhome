@@ -21,6 +21,11 @@ exports.setCookie = function(res,cookies) {
 			text += "expires=" + expires + "; ";
 		}
 
+		// maxAge
+		if (cookies[i].maxAge) {
+			text += "Max-Age=" + cookies[i].maxAge + "; ";
+		}
+
 		// domain
 		if (cookies[i].domain) {
 			text += "Domain=" + cookies[i].domain + "; ";

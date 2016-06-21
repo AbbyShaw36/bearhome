@@ -1,7 +1,10 @@
-var articleDao = require("../dao/article");
+var articleDao = require("../dao/article").dao;
 var error = require("../errors/article");
+var service = {};
 
-exports.deleteById = function(articleArr,cb) {
+exports.service = service;
+
+service.deleteById = function(articleArr,cb) {
 	for (var i = 0; i < articleArr.length; i++) {
 		var id = articleArr[i].getId();
 		articleDao.deleteById(id,function(err,result) {
@@ -20,11 +23,11 @@ exports.deleteById = function(articleArr,cb) {
 	cb(null);
 }
 
-exports.deleteByClass = function(articleClass,cb) {
+service.deleteByClass = function(articleClass,cb) {
 	articleDao.deleteByClass(articleClass,cb);
 }
 
-exports.changeClass = function(articleArr,cb) {
+service.changeClass = function(articleArr,cb) {
 	for (var i = 0; i < articleArr.length; i++) {
 		var article = articleArr[i];
 		articleDao.changeClass(article,function(err,result) {
@@ -43,7 +46,7 @@ exports.changeClass = function(articleArr,cb) {
 	cb(null);
 }
 
-exports.getList = function(articleList,cb) {
+service.getList = function(articleList,cb) {
 	articleDao.getList(articleList,function(err,result) {
 		var retErr = null;
 
@@ -57,11 +60,11 @@ exports.getList = function(articleList,cb) {
 	});
 }
 
-exports.create = function(article,cb) {
+service.create = function(article,cb) {
 	articleDao.create(article,cb);
 }
 
-exports.update = function(article,cb) {
+service.update = function(article,cb) {
 	articleDao.update(article,function(err,result) {
 		var retErr = null;
 
@@ -75,7 +78,7 @@ exports.update = function(article,cb) {
 	});
 }
 
-exports.get = function(article,cb) {
+service.get = function(article,cb) {
 	articleDao.get(article,function(err,result) {
 		var retErr = null;
 

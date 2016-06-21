@@ -1,5 +1,6 @@
 var connection = require("./mysql").connection;
 var commonErr = require("../errors/common");
+var logger = require("../util/logger").logger;
 var dao = {};
 
 exports.dao = dao;
@@ -72,7 +73,7 @@ dao.get = function(article,cb) {
 
 dao.getList = function(articleList,cb) {
 	var page = articleList.getPage();
-	var perPage = articleList.getPerPage();
+	var perPage = articleList.getPerpage();
 	var articleClass = articleList.getClass();
 	var queryText = "SELECT * FROM article";
 
@@ -82,19 +83,22 @@ dao.getList = function(articleList,cb) {
 
 	connection.query(queryText,function(err,result) {
 		if (err) {
+			console.log(err);
 			cb(commonErr.internalServerErr);
 			return;
 		}
 
 		if (result.length === 0) {
-			
+			cb(commonErr.resourceNotFound);
+			return;
 		}
 	});
 
-	queryText += " ORDER BY publishTime DESC LIMIT " + (page - 1) * perPage "," + page * perPage;
+	queryText += " ORDER BY publishTime DESC LIMIT " + (page - 1) * perPage + "," + page * perPage;
 
 	connection.query(queryText,function(err,result) {
 		var retErr = null;
+
 		if (err) {
 			retErr = commonErr.internalServerErr;
 		}

@@ -1,5 +1,5 @@
 extends ./layout
--var perpage = 20
+//- -var perpage = 20
 block content
 	// 主体内容开始
 	#mainContent
@@ -20,9 +20,9 @@ block content
 				input(type="button", value="搜索")
 			// 搜索结束
 			.btn
-				input(type="button", value="新增文章")
-				input(type="button", value="修改文章分类")
-				input(type="button", value="管理文章分类")
+				a(href="#") 新增文章
+				a(href="#") 修改文章分类
+				a(href="articleClass.html") 管理文章分类
 			// 文章列表开始
 			-if (articleList.length === 0)
 				p 该栏目还没有文章

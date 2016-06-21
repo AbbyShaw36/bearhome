@@ -3,7 +3,7 @@ var getDataByBody = getData.byBody;
 var getDataByURL = getData.byURL;
 var Article = require("../model/article").Article;
 var ArticleList = require("../model/articleList").ArticleList;
-var service = require("../service/article");
+var service = require("../service/article").service;
 var error = require("../errors/article");
 
 /**
@@ -99,20 +99,20 @@ exports.changeClass = function(req,cb) {
  * 获取文章列表
  * @param  {Function} cb callback
  */
-exports.getArticleList = function(req,cb) {
+exports.getList = function(req,res,cb) {
 	getDataByURL(req,function(data) {
 		var page = data.page || 1;
-		var perPage = data.perPage;
+		var perpage = data.perpage;
 		var articleClass = data.class;
 
-		if (!perPage) {
+		if (!perpage) {
 			cb(error.perPageNotProvided);
 			return;
 		}
 
 		var articleList = new ArticleList();
 		articleList.setPage(page);
-		articleList.setPerPage(perPage);
+		articleList.setPerpage(perpage);
 		articleList.setClass(articleClass);
 
 		service.getList(articleList,function(err,result) {

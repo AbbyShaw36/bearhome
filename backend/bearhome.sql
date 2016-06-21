@@ -16,11 +16,13 @@ CREATE TABLE IF NOT EXISTS `article` (
 	`content` text,
 	`imgPath` varchar(255) DEFAULT NULL,
 	`publishTime` bigint(20) DEFAULT NULL,
-	`classId` int(11) NOT NULL
+	`classId` int(11) NOT NULL,
+	PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8;
 
 DROP TABLE `articleClass`;
 CREATE TABLE IF NOT EXISTS `articleClass` (
 	`classId` int(11) NOT NULL AUTO_INCREMENT,
-	`className` varchar(255) NOT NULL
+	`className` varchar(255) NOT NULL,
+	PRIMARY KEY (`classId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8;

@@ -1,8 +1,11 @@
 var http = require("http");
+var url = require("url");
 var mongoose = require("mongoose");
 var router = require("./router/router").router;
-var account = require("./web/account");
 var logger = require("./util/logger").logger;
+var account = require("./web/account");
+var articleList = require("./web/articleList");
+var articleClass = require("./web/articleClass");
 
 var handle = {
 	"/admin/account/signin" : {
@@ -13,6 +16,15 @@ var handle = {
 	},
 	"/admin/account/getBySessionId" : {
 		"GET" : account.getBySessionId
+	},
+	"/admin/account/signout" : {
+		"DELETE" : account.signout
+	},
+	"/admin/articleList/getList" : {
+		"GET" : articleList.getList
+	},
+	"/admin/articleClass/get" : {
+		"GET" : articleClass.get
 	}
 };
 
@@ -32,7 +44,8 @@ db.once("open",function() {
 // 服务器监听
 (function (router,handle) {
 	function onRequest(req,res) {
-		var pathname = req.url;
+		var pathname = url.parse(req.url).pathname;
+
 		logger.trace("Request for " + pathname + " received.");
 		router(req,res,pathname,handle);
 	}

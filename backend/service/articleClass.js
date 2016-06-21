@@ -1,12 +1,15 @@
-var articleClassDao = require("../dao/articleClass");
-var articleService = require("./article");
+var articleClassDao = require("../dao/articleClass").dao;
+var articleService = require("./article").service;
 var error = require("../errors/articleClass");
+var service = {};
 
-exports.create = function(articleClass,cb) {
+exports.service = service
+
+service.create = function(articleClass,cb) {
 	articleClassDao.create(articleClass,cb);
 }
 
-exports.update = function(articleClass,cb) {
+service.update = function(articleClass,cb) {
 	articleClassDao.update(articleClass,function(err,result) {
 		var retErr = null;
 
@@ -20,7 +23,7 @@ exports.update = function(articleClass,cb) {
 	});
 }
 
-exports.delete = function(articleClass,cb) {
+service.delete = function(articleClass,cb) {
 	articleClassDao.delete(articleClass,function(err,result) {
 		if (err) {
 			cb(err);
@@ -36,7 +39,7 @@ exports.delete = function(articleClass,cb) {
 	});
 }
 
-exports.get = function(cb) {
+service.get = function(cb) {
 	articleClassDao.get(function(err,result) {
 		var retErr = null;
 

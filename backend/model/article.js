@@ -1,4 +1,6 @@
-exports.Article = function() {}
+var Article = function() {}
+
+exports.Article = Article;
 
 Article.prototype.setId = function(id) { this.id = id; }
 Article.prototype.getId = function() { return this.id; }

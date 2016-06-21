@@ -1,4 +1,4 @@
-var connection = require("./mysql");
+var connection = require("./mysql").connection;
 var commonErr = require("../errors/common");
 var dao = {};
 

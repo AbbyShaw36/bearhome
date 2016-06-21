@@ -1,15 +1,18 @@
 var http = require("http");
+var url = require("url");
 var router = require("./router/router").router;
 var admin = require("./web/admin");
 var logger = require("./util/logger").logger;
 
 var handle = {
-	"/admin/index.html" : admin.index
+	"/admin/index.html" : admin.index,
+	"/admin/articleList.html" : admin.articleList,
+	"/admin/articleClass.html" : admin.articleClass
 };
 
 (function(router,handle) {
 	function onRequest(req,res) {
-		var pathname = req.url;
+		var pathname = url.parse(req.url).pathname;
 
 		logger.trace("Request for " + pathname + " received.");
 
