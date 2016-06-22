@@ -57,8 +57,8 @@ common.getArticleList = function(req,perpage,cb) {
 			if (data) {
 				var data = JSON.parse(data);
 
-				logger.trace("[getArticleList result] - " + data);
-				articleList = data.articleList;
+				logger.trace("[getArticleList result] - " + data.articles);
+				articleList = data.articles;
 			}
 
 			cb(null,articleList);
@@ -72,29 +72,56 @@ common.getArticleList = function(req,perpage,cb) {
 	req.end();
 }
 
-common.getArticleClass = function(req,cb) {
+// common.getArticleClass = function(req,cb) {
+// 	options = extend(options,{
+// 		path : "/admin/articleClass/get",
+// 		headers : req.headers
+// 	});
+
+// 	var req = http.request(options,function(res) {
+// 		var classList = [];
+
+// 		if (res.statusCode !== 200 && res.statusCode !== 404) {
+// 			cb({statusCode: res.statusCode, statusMessage: res.statusMessage});
+// 			return;
+// 		}
+
+// 		getData(res,function(data) {
+// 			if (data) {
+// 				var data = JSON.parse(data);
+
+// 				logger.trace("[getArticleClass result] - " + data);
+// 				classList = data.classList;
+// 			}
+
+// 			cb(null,classList);
+// 		});
+// 	});
+// }
+
+common.getArticle = function(req,articleId,cb) {
 	options = extend(options,{
-		path : "/admin/articleClass/get",
+		path : "/admin/article/get?id=" + articleId,
 		headers : req.headers
 	});
 
 	var req = http.request(options,function(res) {
-		var classList = [];
-
-		if (res.statusCode !== 200 && res.statusCode !== 404) {
+		if (res.statusCode !== 200) {
 			cb({statusCode: res.statusCode, statusMessage: res.statusMessage});
 			return;
 		}
 
 		getData(res,function(data) {
-			if (data) {
-				var data = JSON.parse(data);
+			var article = JSON.parse(data).article;
 
-				logger.trace("[getArticleClass result] - " + data);
-				classList = data.classList;
-			}
-
-			cb(null,classList);
+			logger.trace("[getArticle result] -" + article);
+			cb(null,article);
 		});
 	});
+	
+	req.on("error",function(err) {
+		logger.error(err.message);
+	});
+
+	req.end();
 }

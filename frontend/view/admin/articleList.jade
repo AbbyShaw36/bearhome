@@ -1,5 +1,5 @@
 extends ./layout
-//- -var perpage = 20
+
 block content
 	// 主体内容开始
 	#mainContent
@@ -20,13 +20,13 @@ block content
 				input(type="button", value="搜索")
 			// 搜索结束
 			.btn
-				a(href="#") 新增文章
+				a(href="createArticle.html") 新建文章
 				a(href="#") 修改文章分类
 				a(href="articleClass.html") 管理文章分类
 			// 文章列表开始
-			-if (articleList.length === 0)
+			if (articleList.length === 0)
 				p 该栏目还没有文章
-			-else
+			else
 				table
 					thead
 						tr
@@ -36,29 +36,30 @@ block content
 							th 更新时间
 							th 操作
 					tbody
-						-for (var i = 0; i < articleList.length; i++)
-							tr(id= articleList[id])
+						-each item,i in articleList
+							-var publishTime = setTimeType(item.publishTime)
+							tr(id= "article_" + item.id)
 								td= i+1
-								td= articleList[title]
-								td= articleList[className]
-								td= articleList[publishTime]
+								td= item.title
+								td(id= "class_" + item.classId)= item.className
+								td= publishTime
 								td
-									a(title="编辑")
-									a(title="删除")
+									a(href="updateArticle.html?id=" + item.id, title="编辑") 编辑
+									a(href="#", title="删除") 删除
 			// 文章列表结束
 			// 分页开始
-			-if (articleList.length > perpage)
+			if (articleList.length > perpage)
 				.pageList
 					ul
 						li 首页
 						li 上一页
-						-var pageNum = 0
-						-if (totalPage < 5)
+						var pageNum = 0
+						if (totalPage < 5)
 							pageNum = totalPage
-						-else
+						else
 							pageNum = 5
-						-for (var i = 0; i < pageNum; i++)
-							-if (i === 0)
+						for (var i = 0; i < pageNum; i++)
+							if (i === 0)
 								li.active= i+1
 							li= i+1
 						li 下一页

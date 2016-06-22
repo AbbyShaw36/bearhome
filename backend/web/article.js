@@ -3,7 +3,7 @@ var getData = require("../util/getData");
 var getDataByBody = getData.byBody;
 var getDataByURL = getData.byURL;
 var Article = require("../model/article").Article;
-var arror = require("../errors/article");
+var error = require("../errors/article");
 
 /**
  * 添加文章
@@ -14,7 +14,7 @@ var arror = require("../errors/article");
  * content : 内容
  *  class  : 分类
  */
-exports.create = function(req,cb) {
+exports.create = function(req,res,cb) {
 	// 获取提交数据
 	getDataByBody(req,function(data) {
 		var title = data.title;
@@ -59,14 +59,18 @@ exports.create = function(req,cb) {
  *  2 : 未登录
  *  3 : 提交数据错误
  */
-exports.update = function(req,res) {
+exports.update = function(req,res,cb) {
 	// 获取提交数据
-	getData(req,function(data) {
+	getDataByBody(req,function(data) {
 		var id = data.id;
 		var title = data.title;
 		var content = data.content || "";
 		var classId = data.class;
 
+
+		console.log(id);
+		console.log(title);
+		console.log(classId);
 		// 数据是否存在
 		if (!id) {
 			cb(error.articleIdNotProvided);
@@ -91,7 +95,14 @@ exports.update = function(req,res) {
 		article.setClass(classId);
 
 		// 执行更新操作
-		service.update(article,cb);
+		service.update(article,function(err,result) {
+			if (err) {
+				cb(err);
+				return;
+			}
+
+			cb(null,{article:result[0]});
+		});
 	});
 }
 
@@ -99,7 +110,7 @@ exports.update = function(req,res) {
  * 获取文章
  * @param  {Function} cb callback
  */
-exports.get = function(req,cb) {
+exports.get = function(req,res,cb) {
 	getDataByURL(req,function(data) {
 		var id = data.id;
 

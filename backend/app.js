@@ -6,6 +6,7 @@ var logger = require("./util/logger").logger;
 var account = require("./web/account");
 var articleList = require("./web/articleList");
 var articleClass = require("./web/articleClass");
+var article = require("./web/article");
 
 var handle = {
 	"/admin/account/signin" : {
@@ -25,6 +26,24 @@ var handle = {
 	},
 	"/admin/articleClass/get" : {
 		"GET" : articleClass.get
+	},
+	"/admin/articleClass/create" : {
+		"POST" : articleClass.create
+	},
+	"/admin/articleClass/update" : {
+		"PUT" : articleClass.update
+	},
+	"/admin/articleClass/delete" : {
+		"DELETE" : articleClass.delete
+	},
+	"/admin/article/create" : {
+		"POST" : article.create
+	},
+	"/admin/article/get" : {
+		"GET" : article.get
+	},
+	"/admin/article/update" : {
+		"PUT" : article.update
 	}
 };
 

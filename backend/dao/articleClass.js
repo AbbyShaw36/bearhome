@@ -1,18 +1,22 @@
+var mysql = require("mysql");
 var connection = require("./mysql").connection;
 var commonErr = require("../errors/common");
+var logger = require("../util/logger").logger;
 var dao = {};
 
 exports.dao = dao;
 
 dao.create = function(articleClass,cb) {
 	var name = articleClass.getName();
-	var queryText = "INSERT INTO articleClass(name) VALUES('" + name + "')";
+	var sql = "INSERT INTO articleClass(className) VALUES(?)";
+	var inserts = [name];
+	sql = mysql.format(sql,inserts);
 
-	connection.query(queryText,function(err,result) {
+	connection.query(sql,function(err,result) {
 		var retErr = null;
 
 		if (err) {
-			console.log("[INSERT ERR] - " + err.message);
+			logger.warn("[INSERT ERR] - " + err.message);
 			retErr = commonErr.internalServerErr;
 		}
 
@@ -21,15 +25,18 @@ dao.create = function(articleClass,cb) {
 }
 
 dao.update = function(articleClass,cb) {
+	console.log(123);
 	var id = articleClass.getId();
 	var name = articleClass.getName();
-	var queryText = util.format("UPDATE articleClass SET name = '%s' WHERE id = %d",name,id);
+	var sql = "UPDATE articleClass SET className = ? WHERE classId = ?";
+	var inserts = [name,id];
+	sql = mysql.format(sql,inserts);
 	
-	connection.query(queryText,function(err,result) {
+	connection.query(sql,function(err,result) {
 		var retErr = null;
 
 		if (err) {
-			console.log("[UPDATE ERR] - " + err.message);
+			logger.warn("[UPDATE ERR] - " + err.message);
 			retErr = commonErr.internalServerErr;
 		}
 
@@ -39,13 +46,15 @@ dao.update = function(articleClass,cb) {
 
 dao.delete = function(articleClass,cb) {
 	var id = articleClass.getId();
-	var queryText = "DELETE FROM articleClass WHERE id = " + id;
+	var sql = "DELETE FROM articleClass WHERE classId = ?";
+	var inserts = [id];
+	sql = mysql.format(sql,inserts);
 	
-	connection.query(queryText,function(err,result) {
+	connection.query(sql,function(err,result) {
 		var retErr = null;
 
 		if (err) {
-			console.log("[UPDATE ERR] - " + err.message);
+			logger.warn("[DELETE ERR] - " + err.message);
 			retErr = commonErr.internalServerErr;
 		}
 
@@ -54,13 +63,13 @@ dao.delete = function(articleClass,cb) {
 }
 
 dao.get = function(cb) {
-	var queryText = "SELECT * FROM articleClass";
+	var sql = "SELECT * FROM articleClass";
 
-	connection.query(queryText,function(err,result) {
+	connection.query(sql,function(err,result) {
 		var retErr = null;
 
 		if (err) {
-			console.log("[SELECT ERR] - " + err.message);
+			logger.warn("[SELECT ERR] - " + err.message);
 			retErr = commonErr.internalServerErr;
 		}
 

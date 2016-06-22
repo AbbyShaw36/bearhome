@@ -1,6 +1,7 @@
 var articleClassDao = require("../dao/articleClass").dao;
 var articleService = require("./article").service;
 var error = require("../errors/articleClass");
+var logger = require("../util/logger").logger;
 var service = {};
 
 exports.service = service
@@ -16,6 +17,7 @@ service.update = function(articleClass,cb) {
 		if (err) {
 			retErr = err;
 		} else if (result.length === 0) {
+			logger.warn("[Update class error] - class not exists");
 			retErr = error.classNotExists;
 		}
 

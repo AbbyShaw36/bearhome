@@ -6,38 +6,38 @@ block content
 		// 顶部导航开始
 		.topNav
 			a(href= "articleList.html") 文章列表
-			span
+			span 》
 			span 文章分类
 		// 顶部导航结束
 		.content
 			// 创建分类
-			.create
+			#createClass
 				h3 创建文章分类
 				label
 					span 分类名称
 					input(type="text")#createClass_input
 				input(type="button", value="保存")#createClass_btn
 			// 修改分类
-			.update
+			#updateClass
 				h3 修改文章分类
 				label
 					span 选择分类
-					select
+					select.classList
 						option
 				label
 					span 新分类名
-					input(type="text")
-				input(type="button", value="保存")
+					input(type="text")#updateClass_input
+				input(type="button", value="保存")#updateClass_btn
 			// 删除分类
-			.delete
+			#deleteClass
 				h3 删除文章分类
 				label
 					span 选择分类
-					select
+					select.classList
 						option
-				input(type="button", value="删除")
+				input(type="button", value="删除")#deleteClass_Btn
 			.btnBox
-				input(type="button", value="返回")
+				a(href= "articleList.html") 返回
 
 block script
 	script(src="js/getArticleClass.js")

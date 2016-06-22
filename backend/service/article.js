@@ -1,5 +1,6 @@
 var articleDao = require("../dao/article").dao;
 var error = require("../errors/article");
+var logger = require("../util/logger").logger;
 var service = {};
 
 exports.service = service;
@@ -53,6 +54,7 @@ service.getList = function(articleList,cb) {
 		if (err) {
 			retErr = err;
 		} else if (result.length === 0) {
+			logger.warn("[update article error] - " + error.articleNotExists.discription);
 			retErr = error.articleNotExists;
 		}
 
@@ -71,6 +73,7 @@ service.update = function(article,cb) {
 		if (err) {
 			retErr = err;
 		} else if (result.length === 0) {
+			logger.warn("[update article error] - " + error.articleNotExists.discription);
 			retErr = error.articleNotExists;
 		}
 

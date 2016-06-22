@@ -1,40 +1,52 @@
 extends ./layout
+
 block content
 	// 主体内容开始
 	#mainContent
 		// 顶部导航开始
 		.topNav
-			a(href= path+"articleList") 文章列表
-			span
-			span 文章
+			a(href= "articleList.html") 文章列表
+			span 》
+			if (article)
+				span 修改文章
+			else
+				span 新建文章
 		// 顶部导航结束
 		.content
 			// 文章表单开始
 			#artcileContent
-				-if (article)
+				if (article)
+					input(type="hidden", value= article.id)#articleId
 					label
 						span 标题
-						input(placeholder= article[title])
+						input(type="text", value= article.title)#articleTitle
 					label
 						span 分类
-						select
-							option(id= article[classId])= article[className]
+						select.classList#articleClass
+							option(value= article.classId, selected="selected")= article.className
 					label
 						span 内容
-						textarea= article[content]
-				-else
+						textarea#articleContent= article.content
+				else
 					label
 						span 标题
-						input
+						input(type="text")#articleTitle
 					label
 						span 分类
-						select
+						select.classList#articleClass
 							option
 					label
 						span 内容
-						textarea
+						textarea#articleContent
 				.btnBox
-					input(type="button", value="保存")
-					input(type="button", value="取消")
+					input(type="button", value="保存")#save
+					input(type="button", value="取消")#cancle
 			// 文章表单结束
 	// 主体内容结束
+
+block script
+	script(src="js/getArticleClass.js")
+	if (article)
+		script(src="js/updateArticle.js")
+	else
+		script(src="js/createArticle.js")

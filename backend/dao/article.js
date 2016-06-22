@@ -1,3 +1,4 @@
+var mysql = require("mysql");
 var connection = require("./mysql").connection;
 var commonErr = require("../errors/common");
 var logger = require("../util/logger").logger;
@@ -9,14 +10,17 @@ dao.create = function(article,cb) {
 	var title = article.getTitle();
 	var classId = article.getClass();
 	var content = article.getContent();
-	var publishTime = new Date();
-	var queryText = util.format("INSERT INTO article(title,class,content,publishTime) VALUES(%s,%d,%s,%d)",title,classId,content,publishTime);
+	var publishTime = new Date().getTime();
+	console.log(publishTime);
+	var sql = "INSERT INTO article(title,classId,content,publishTime) VALUES(?,?,?,?)";
+	var inserts = [title,classId,content,publishTime];
+	sql = mysql.format(sql,inserts);
 	
-	connection.query(queryText,function(err,result) {
+	connection.query(sql,function(err,result) {
 		var retErr = null;
 
 		if (err) {
-			console.log("[INSERT ERR] - " + err.message);
+			logger.warn("[INSERT ERR] - " + err.message);
 			retErr = commonErr.internalServerErr;
 		}
 
@@ -41,29 +45,33 @@ dao.deleteById = function(id,cb) {
 
 dao.deleteByClass = function(articleClass,cb) {
 	var classId = articleClass.getId();
-	var queryText = "DELETE FROM article WHERE class = " + classId;
+	var sql = "DELETE FROM article WHERE classId = ?";
+	var inserts = [classId];
+	sql = mysql.format(sql,inserts);
 
-	connection.query(queryText,function(err,result) {
+	connection.query(sql,function(err,result) {
 		var retErr = null;
 
 		if (err) {
-			console.log("[DELETE ERR] - " + err.message);
+			logger.warn("[delete article by class err] - " + err.message);
 			retErr = commonErr.internalServerErr;
 		}
 
-		cb(err);
+		cb(retErr,result);
 	});
 }
 
 dao.get = function(article,cb) {
 	var id = article.getId();
-	var queryText = "SELECT * FROM article WHERE id = " + id;
+	var sql = "SELECT * FROM article,articleClass WHERE article.classId = articleClass.classId AND id = ?";
+	var inserts = [id];
+	sql = mysql.format(sql,inserts);
 	
-	connection.query(queryText,function(err,result) {
+	connection.query(sql,function(err,result) {
 		var retErr = null;
 
 		if (err) {
-			console.log("[SELECT ERR] - " + err.message);
+			console.log("[get article err] - " + err.message);
 			retErr = commonErr.internalServerErr;
 		}
 
@@ -75,31 +83,40 @@ dao.getList = function(articleList,cb) {
 	var page = articleList.getPage();
 	var perPage = articleList.getPerpage();
 	var articleClass = articleList.getClass();
-	var queryText = "SELECT * FROM article";
+	var queryText = "SELECT * FROM article,articleClass WHERE article.classId = articleClass.classId";
+	var inserts = [];
 
 	if (articleClass) {
-		queryText += " WHERE class = '" + articleClass + "'";
+		queryText += " AND article.classId = ?";
+		inserts.push(articleClass);
 	}
 
-	connection.query(queryText,function(err,result) {
+	var sql = mysql.format(queryText,inserts);
+
+	connection.query(sql,function(err,result) {
 		if (err) {
-			console.log(err);
+			logger.warn("[get aritcle list err] - " + err.message);
 			cb(commonErr.internalServerErr);
 			return;
 		}
 
 		if (result.length === 0) {
+			logger.warn("[get article list err] - No matching results");
 			cb(commonErr.resourceNotFound);
 			return;
 		}
 	});
 
-	queryText += " ORDER BY publishTime DESC LIMIT " + (page - 1) * perPage + "," + page * perPage;
+	queryText += " ORDER BY publishTime DESC LIMIT ?,?";
+	inserts.push((page - 1) * perPage);
+	inserts.push(page * perPage);
+	sql = mysql.format(queryText,inserts);
 
-	connection.query(queryText,function(err,result) {
+	connection.query(sql,function(err,result) {
 		var retErr = null;
 
 		if (err) {
+			logger.warn("[get article llist err] - " + err.message);
 			retErr = commonErr.internalServerErr;
 		}
 
@@ -129,14 +146,16 @@ dao.update = function(article,cb) {
 	var title = article.getTitle();
 	var classId = article.getClass();
 	var content = article.getContent();
-	var publishTime = new Date();
-	var queryText = util.format("UPDATE article SET title = %s, class = %d, content = %s, publishTime = %s WHERE id = %d",title,classId,content,publishTime,id);
+	var publishTime = new Date().getTime();
+	var sql = "UPDATE article SET title = ?, classId = ?, content = ?, publishTime = ? WHERE id = ?";
+	var inserts = [title,classId,content,publishTime,id];
+	sql = mysql.format(sql,inserts);
 
-	connection.query(queryText,function(err,result) {
+	connection.query(sql,function(err,result) {
 		var retErr = null;
 
 		if (err) {
-			console.log("[UPDATE ERR] - " + err.message);
+			logger.warn("[update article error] - " + err.message);
 			retErr = commonErr.internalServerErr;
 		}
 

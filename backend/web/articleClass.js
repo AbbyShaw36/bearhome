@@ -18,7 +18,7 @@ var error = require("../errors/articleClass");
  *  2 : 未登录
  *  3 : 提交数据错误
  */
-exports.create = function(req,cb) {
+exports.create = function(req,res,cb) {
 	// 获取提交数据
 	getDataByBody(req,function(data) {
 		var name = data.name;
@@ -52,11 +52,14 @@ exports.create = function(req,cb) {
  *  2 : 未登录
  *  3 : 提交数据错误
  */
-exports.update = function(req,cb) {
+exports.update = function(req,res,cb) {
 	// 获取提交数据
 	getDataByBody(req,function(data) {
 		var id = data.id;
 		var name = data.name;
+
+		console.log(id);
+		console.log(name);
 
 		// 数据是否存在
 		if (!id) {
@@ -68,6 +71,8 @@ exports.update = function(req,cb) {
 			cb(error.classNameNotProvided);
 			return;
 		}
+
+		console.log(123);
 
 		// 创建分类对象
 		var articleClass = new ArticleClass();
@@ -92,7 +97,7 @@ exports.update = function(req,cb) {
  *  2 : 未登录
  *  3 : 提交数据错误
  */
-exports.delete = function(req,cb) {
+exports.delete = function(req,res,cb) {
 	// 获取提交数据
 	getDataByURL(req,function(data) {
 		var id = data.id;
@@ -105,7 +110,7 @@ exports.delete = function(req,cb) {
 
 		// 创建分类对象
 		var articleClass = new ArticleClass();
-		articleClass.serId(id);
+		articleClass.setId(id);
 
 		// 执行删除操作
 		service.delete(articleClass,cb);
