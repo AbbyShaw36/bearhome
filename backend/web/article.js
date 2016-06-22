@@ -132,3 +132,29 @@ exports.get = function(req,res,cb) {
 		});
 	});
 }
+
+exports.delete = function(req,res,cb) {
+	// 获取提交数据
+	getDataByURL(req,function(data) {
+		var id = data.id;
+
+		// 数据是否存在
+		if (!id) {
+			cb(error.articleIdNotProvided);
+			return;
+		}
+
+		var article = new Article();
+		article.setId(id);
+
+		// 执行删除操作
+		service.deleteById(article,function(err,result) {
+			if (err) {
+				cb(err);
+				return;
+			}
+
+			cb(null,{article: result[0]});
+		});
+	});
+}

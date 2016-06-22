@@ -1,0 +1,20 @@
+if (articleList.length !== 0)
+	table
+		thead
+			tr
+				th 序号
+				th 标题
+				th 分类
+				th 更新时间
+				th 操作
+		tbody
+			-each item,i in articleList
+				-var publishTime = setTimeType(item.publishTime)
+				tr(id= "article_" + item.id)
+					td= i+1
+					td= item.title
+					td(id= "class_" + item.classId)= item.className
+					td= publishTime
+					td
+						a(href="updateArticle.html?id=" + item.id, title="编辑") 编辑
+						a(href="#", title="删除").delBtn 删除

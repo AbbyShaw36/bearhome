@@ -9,7 +9,8 @@ var handle = {
 	"/admin/articleList.html" : admin.articleList,
 	"/admin/articleClass.html" : admin.articleClass,
 	"/admin/createArticle.html" : admin.createArticle,
-	"/admin/updateArticle.html" : admin.updateArticle
+	"/admin/updateArticle.html" : admin.updateArticle,
+	"/admin/getArticleList.html" : admin.getArticleList
 };
 
 (function(router,handle) {

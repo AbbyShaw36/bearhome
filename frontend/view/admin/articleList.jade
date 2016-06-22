@@ -12,22 +12,21 @@ block content
 			.search
 				label
 					span 标题
-					input(type="text")
+					input(type="text")#searchTitle
 				label
 					span 分类
-					select
+					select.classList#searchClass
 						option
-				input(type="button", value="搜索")
+				input(type="button", value="搜索")#searchBtn
 			// 搜索结束
 			.btn
 				a(href="createArticle.html") 新建文章
-				a(href="#") 修改文章分类
 				a(href="articleClass.html") 管理文章分类
 			// 文章列表开始
 			if (articleList.length === 0)
-				p 该栏目还没有文章
+				p 您还没有创建任何文章
 			else
-				table
+				table#articleList
 					thead
 						tr
 							th 序号
@@ -45,7 +44,7 @@ block content
 								td= publishTime
 								td
 									a(href="updateArticle.html?id=" + item.id, title="编辑") 编辑
-									a(href="#", title="删除") 删除
+									a(href="#", title="删除").delBtn 删除
 			// 文章列表结束
 			// 分页开始
 			if (articleList.length > perpage)
@@ -66,3 +65,7 @@ block content
 						li 尾页
 			// 分页结束
 	// 主体内容结束
+
+block script
+	script(src="js/getArticleClass.js")
+	script(src="js/articleList.js")

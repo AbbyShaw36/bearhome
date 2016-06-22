@@ -5,7 +5,7 @@ exports.router = function(req,res,pathname,handle) {
 	logger.trace("About to route a request for " + pathname);
 
 	if (pathname === "/" || pathname === "/admin/") {
-		pathname += "index";
+		pathname += "index.html";
 	}
 
 	middleware(req,res,pathname,handle);

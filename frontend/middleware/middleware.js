@@ -9,10 +9,6 @@ var getDataByBody = getData.byBody;
 var getDataByURL = getData.byURL;
 
 exports.middleware = function(req,res,pathname,handle) {
-	// res.setHeader('Access-Control-Allow-Origin',"127.0.0.1:3000");
-	// res.setHeader('Access-Control-Allow-Credentials', true);
-	// res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-
 	// 检查请求方式
 	if (req.method !== "GET") {
 		logger.warn("The method of request for " + pathname + " is not allowed");

@@ -44,6 +44,9 @@ var handle = {
 	},
 	"/admin/article/update" : {
 		"PUT" : article.update
+	},
+	"/admin/article/delete" : {
+		"DELETE" : article.delete
 	}
 };
 

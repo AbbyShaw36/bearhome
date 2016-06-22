@@ -1,4 +1,5 @@
 var jade = require("jade");
+var extend = require("extend");
 var common = require("./adminCommon").common;
 var setTimeType = require("./util").setTimeType;
 var logger = require("../util/logger").logger;
@@ -36,9 +37,9 @@ exports.articleList = function(req,cb) {
 		}
 
 		var username = result.name;
-		var perpage = 10;
+		var condition = {perpage : 10};
 
-		common.getArticleList(req,perpage,function(err,result) {
+		common.getArticleList(req,condition,function(err,result) {
 			if (err) {
 				cb(err);
 				return;
@@ -140,6 +141,47 @@ exports.updateArticle = function(req,cb) {
 					article : article
 				};
 				var fn = jade.compileFile("./view/admin/article.jade",options);
+				var html = fn(locals);
+
+				cb(null,html);
+			});
+		});
+	});
+}
+
+exports.getArticleList = function(req,cb) {
+	getData(req,function(data) {
+		var condition = {perpage : 10};
+		condition = extend(condition,data);
+
+		common.getUserName(req,function(err,result) {
+			if (err) {
+				cb(err);
+				return;
+			}
+
+			var username = result.name;
+
+			common.getArticleList(req,condition,function(err,result) {
+				if (err) {
+					cb(err);
+					return;
+				}
+
+				console.log(result);
+
+				var articleList = result;
+				var options = {
+					filename: "articleList.html",
+					doctype: "html"
+				};
+				var locals = {
+					title: "后台管理系统-文章列表",
+					username : username,
+					articleList : articleList,
+					setTimeType : setTimeType
+				};
+				var fn = jade.compileFile("./view/admin/getArticleList.jade",options);
 				var html = fn(locals);
 
 				cb(null,html);

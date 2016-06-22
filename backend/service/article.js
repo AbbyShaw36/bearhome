@@ -5,23 +5,21 @@ var service = {};
 
 exports.service = service;
 
-service.deleteById = function(articleArr,cb) {
-	for (var i = 0; i < articleArr.length; i++) {
-		var id = articleArr[i].getId();
-		articleDao.deleteById(id,function(err,result) {
-			if (err) {
-				cb(err);
-				return;
-			}
+service.deleteById = function(article,cb) {
+	articleDao.deleteById(article,function(err,result) {
+		var retErr = null;
 
-			if (result.length === 0) {
-				cb(error.articleNotExists);
-				return;
-			}
-		});
-	}
+		if (err) {
+			retErr = err;
+		}
 
-	cb(null);
+		if (result.length === 0) {
+			logger.warn("[delete article by ID error] - " + error.articleNotExists.discription);
+			retErr = error.articleNotExists;
+		}
+
+		cb(retErr,result);
+	});
 }
 
 service.deleteByClass = function(articleClass,cb) {

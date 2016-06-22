@@ -28,14 +28,17 @@ dao.create = function(article,cb) {
 	});
 }
 
-dao.deleteById = function(id,cb) {
-	var queryText = "DELETE FROM article WHERE id = " + id;
+dao.deleteById = function(article,cb) {
+	var id = article.getId();
+	var sql = "DELETE FROM article WHERE id = ?";
+	var inserts = [id];
+	sql = mysql.format(sql,inserts);
 
-	connection.query(queryText,function(err,result) {
+	connection.query(sql,function(err,result) {
 		var retErr = null;
 
 		if (err) {
-			console.log("[DELETE ERR] - " + err.message);
+			console.log("[delete article by ID error] - " + err.message);
 			retErr = commonErr.internalServerErr;
 		}
 
@@ -83,12 +86,18 @@ dao.getList = function(articleList,cb) {
 	var page = articleList.getPage();
 	var perPage = articleList.getPerpage();
 	var articleClass = articleList.getClass();
+	var title = articleList.getTitle();
 	var queryText = "SELECT * FROM article,articleClass WHERE article.classId = articleClass.classId";
 	var inserts = [];
 
 	if (articleClass) {
 		queryText += " AND article.classId = ?";
 		inserts.push(articleClass);
+	}
+
+	if (title) {
+		queryText += " AND title = ?";
+		inserts.push(title);
 	}
 
 	var sql = mysql.format(queryText,inserts);

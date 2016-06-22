@@ -39,9 +39,27 @@ common.getUserName = function(req,cb) {
 }
 
 // 获取文章列表
-common.getArticleList = function(req,perpage,cb) {
+common.getArticleList = function(req,condition,cb) {
+	var url = "/admin/articleList/getList?";
+
+	if (condition.perpage) {
+		url += "perpage=" + condition.perpage;
+	}
+
+	if (condition.title) {
+		url += "&title=" + condition.title;
+	}
+
+	if (condition.classId) {
+		url += "&classId=" + condition.classId;
+	}
+
+	if (condition.page) {
+		url += "&page=" + condition.page;
+	}
+
 	options = extend(options,{
-		path : "/admin/articleList/getList?perpage=" + perpage,
+		path : url,
 		headers : req.headers
 	});
 
