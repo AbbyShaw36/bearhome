@@ -7,6 +7,7 @@ var account = require("./web/account");
 var articleList = require("./web/articleList");
 var articleClass = require("./web/articleClass");
 var article = require("./web/article");
+var gallery = require("./web/gallery");
 
 var handle = {
 	"/admin/account/signin" : {
@@ -47,6 +48,18 @@ var handle = {
 	},
 	"/admin/article/delete" : {
 		"DELETE" : article.delete
+	},
+	"/admin/gallery/getList" : {
+		"GET" : gallery.getList
+	},
+	"/admin/gallery/create" : {
+		"POST" : gallery.create
+	},
+	"/admin/gallery/getImages" : {
+		"GET" : gallery.getImages
+	},
+	"/admin/gallery/get" : {
+		"GET" : gallery.get
 	}
 };
 

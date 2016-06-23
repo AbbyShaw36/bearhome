@@ -24,5 +24,25 @@ DROP TABLE `articleClass`;
 CREATE TABLE IF NOT EXISTS `articleClass` (
 	`classId` int(11) NOT NULL AUTO_INCREMENT,
 	`className` varchar(255) NOT NULL,
-	PRIMARY KEY (`classId`)
+	PRIMARY KEY (`classId`),
+	UNIQUE (`className`)
+) ENGINE=InnoDB DEFAULT CHARSET=UTF8;
+
+DROP TABLE `gallery`;
+CREATE TABLE IF NOT EXISTS `gallery` (
+	`galleryId` int(11) NOT NULL AUTO_INCREMENT,
+	`galleryName` varchar(255) NOT NULL,
+	`galleryPath` varchar(255) NOT NULL,
+	`coverPath` varchar(255) DEFAULT NULL,
+	`coverFile` varchar(255) DEFAULT NULL,
+	PRIMARY KEY (`galleryId`),
+	UNIQUE (`galleryName`)
+) ENGINE=InnoDB DEFAULT CHARSET=UTF8;
+
+DROP TABLE `images`;
+CREATE TABLE IF NOT EXISTS `images` (
+	`id` int(11) NOT NULL AUTO_INCREMENT,
+	`galleryId` int(11) NOT NULL,
+	`file` varchar(255) NOT NULL,
+	PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8;

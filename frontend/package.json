@@ -11,6 +11,7 @@
 		"jade" : "latest",
 		"querystring" : "latest",
 		"url" : "latest",
+		"sha1" : "latest",
 		"extend" : "latest"
 	}
 }

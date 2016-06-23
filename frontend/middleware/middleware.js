@@ -9,15 +9,6 @@ var getDataByBody = getData.byBody;
 var getDataByURL = getData.byURL;
 
 exports.middleware = function(req,res,pathname,handle) {
-	// 检查请求方式
-	if (req.method !== "GET") {
-		logger.warn("The method of request for " + pathname + " is not allowed");
-		res.statusCode = statusCode.methodNotAllowed;
-		res.statusMessage = error.methodNotAllowed.discription;
-		res.end();
-		return;
-	}
-
 	// 检查静态页面请求
 	if (!handle[pathname]) {
 		logger.trace("The request for " + pathname + " is a static serve");
@@ -25,7 +16,17 @@ exports.middleware = function(req,res,pathname,handle) {
 		return;
 	}
 
-	handle[pathname](req,function(err,html) {
+
+	// 检查请求方式
+	if (!handle[pathname][req.method]) {
+		logger.warn("The method of request for " + pathname + " is not allowed");
+		res.statusCode = statusCode.methodNotAllowed;
+		res.statusMessage = error.methodNotAllowed.discription;
+		res.end();
+		return;
+	}
+
+	handle[pathname][req.method](req,function(err,result) {
 		if (err) {
 			logger.debug(err);
 			if (err.statusCode) {
@@ -46,8 +47,12 @@ exports.middleware = function(req,res,pathname,handle) {
 			return;
 		}
 
-		res.setHeader("Content-Type","html");
-		res.write(html);
-		res.end();
+		if (typeof result === "string") {
+			res.setHeader("Content-Type","html");
+			res.write(result);
+			res.end();
+		}
+
+		res.end(JSON.stringify(result));
 	});
 }

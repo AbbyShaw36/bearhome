@@ -1,4 +1,5 @@
 extends ./layout
+
 block content
 	// 主体内容开始
 	#mainContent
@@ -12,13 +13,22 @@ block content
 				div
 					label
 						span 相册名称
-						input(type="text")
-					input(type="button", value="创建")
+						input(type="text")#createInput
+					input(type="button", value="创建")#createBtn
 			.galleryList
-				ul
-					each item,i in gallerys
-						li(id= item.id)
-							img(src= item.coverPath + item.coverFile)
-							.btnBox
-								a(href="#", title="修改该相册").update 修改
-								a(href= path + "gallery?id=" + item.id, title="进入该相册") 进入
+				if (galleryList.length === 0)
+					p 您还没有创建任何相册
+				else
+					ul
+						each item,i in galleryList
+							li(id= "gallery_" + item.galleryId)
+								.imgBox
+									img(src= item.coverPath + item.coverFile)
+								.title= item.galleryName
+								.btnBox
+									a(href="#", title="修改该相册")#updateBtn 修改
+									a(href= "gallery.html?id=" + item.galleryId, title="进入该相册") 进入
+									a(href="#", title="删除该相册")#deleteBtn 删除
+
+block script
+	script(src="js/galleryList.js")

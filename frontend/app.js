@@ -5,12 +5,36 @@ var admin = require("./web/admin");
 var logger = require("./util/logger").logger;
 
 var handle = {
-	"/admin/index.html" : admin.index,
-	"/admin/articleList.html" : admin.articleList,
-	"/admin/articleClass.html" : admin.articleClass,
-	"/admin/createArticle.html" : admin.createArticle,
-	"/admin/updateArticle.html" : admin.updateArticle,
-	"/admin/getArticleList.html" : admin.getArticleList
+	"/admin/index.html" : {
+		"GET" : admin.index
+	},
+	"/admin/articleList.html" : {
+		"GET" : admin.articleList
+	},
+	"/admin/articleClass.html" : {
+		"GET" : admin.articleClass
+	},
+	"/admin/createArticle.html" : {
+		"GET" : admin.createArticle
+	},
+	"/admin/updateArticle.html" : {
+		"GET" : admin.updateArticle
+	},
+	"/admin/getArticleList.html" : {
+		"GET" : admin.getArticleList
+	},
+	"/admin/galleryList.html" : {
+		"GET" : admin.galleryList
+	},
+	"/admin/createGallery" : {
+		"POST" : admin.createGallery
+	},
+	"/admin/gallery.html" : {
+		"GET" : admin.gallery
+	},
+	"/admin/deleteGallery" : {
+		"DELETE" : admin.deleteGallery
+	}
 };
 
 (function(router,handle) {

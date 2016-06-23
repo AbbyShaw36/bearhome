@@ -1,14 +1,37 @@
+var mysql = require("mysql");
 var connection = require("./mysql").connection;
 var commonErr = require("../errors/common");
+var logger = require("../util/logger").logger;
 var dao = {};
 
-dao.get = function(cb) {
+exports.dao = dao;
+
+dao.getList = function(cb) {
 	var queryText = "SELECT * FROM gallery";
 
 	connection.query(queryText,function(err,result) {
 		var retErr = null;
 
 		if (err) {
+			logger.warn("[get gallery list error] - " + err.message);
+			retErr = commonErr.internalServerErr;
+		}
+
+		cb(retErr,result);
+	});
+}
+
+dao.get = function(gallery,cb) {
+	var id = gallery.getId();
+	var sql = "SELECT * FROM gallery WHERE galleryId=?";
+	var inserts = [id];
+	sql = mysql.format(sql,inserts);
+
+	connection.query(sql,function(err,result) {
+		var retErr = null;
+
+		if (err) {
+			logger.error("[get gallery error] - " + err.message);
 			retErr = commonErr.internalServerErr;
 		}
 
@@ -18,12 +41,19 @@ dao.get = function(cb) {
 
 dao.create = function(gallery,cb) {
 	var name = gallery.getName();
-	var queryText = "INSERT INTO gallery(name) VALUES('" + name + "')";
+	var galleryPath = gallery.getGalleryPath();
+	var coverPath = gallery.getCoverPath();
+	var coverFile = gallery.getCoverFile();
+	console.log(name);
+	var sql = "INSERT INTO gallery(galleryName,galleryPath,coverPath,coverFile) VALUES(?,?,?,?)";
+	var inserts = [name,galleryPath,coverPath,coverFile];
+	sql = mysql.format(sql,inserts);
 
-	connection.query(queryText,function(err,result) {
+	connection.query(sql,function(err,result) {
 		var retErr = null;
 
 		if (err) {
+			logger.error("[create gallery error] - " + err.message);
 			retErr = commonErr.internalServerErr;
 		}
 

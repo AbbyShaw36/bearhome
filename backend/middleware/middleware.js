@@ -27,7 +27,7 @@ exports.middleware = function(req,res,pathname,handle) {
 	}
 	logger.debug(req.method);
 	var fun = handle[pathname][req.method];
-
+	console.log(fun);
 	// 请求方式是否正确
 	if (typeof fun !== "function") {
 		logger.warn("Method of the request for " + pathname + " not allowed");

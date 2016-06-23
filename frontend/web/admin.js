@@ -79,7 +79,7 @@ exports.articleClass = function(req,cb) {
 			doctype: "html"
 		};
 		var locals = {
-			title: "后台管理系统-文章分类",
+			title: "后台管理系统-文章列表-文章分类",
 			username : username
 		};
 		var fn = jade.compileFile("./view/admin/articleClass.jade",options);
@@ -102,7 +102,7 @@ exports.createArticle = function(req,cb) {
 			doctype: "html"
 		};
 		var locals = {
-			title: "后台管理系统-新建文章",
+			title: "后台管理系统-文章列表-新建文章",
 			username : username
 		};
 		var fn = jade.compileFile("./view/admin/article.jade",options);
@@ -136,7 +136,7 @@ exports.updateArticle = function(req,cb) {
 					doctype: "html"
 				};
 				var locals = {
-					title: "后台管理系统-修改文章",
+					title: "后台管理系统-文章列表-修改文章",
 					username : username,
 					article : article
 				};
@@ -176,8 +176,6 @@ exports.getArticleList = function(req,cb) {
 					doctype: "html"
 				};
 				var locals = {
-					title: "后台管理系统-文章列表",
-					username : username,
 					articleList : articleList,
 					setTimeType : setTimeType
 				};
@@ -187,5 +185,123 @@ exports.getArticleList = function(req,cb) {
 				cb(null,html);
 			});
 		});
+	});
+}
+
+exports.galleryList = function(req,cb) {
+	common.getUserName(req,function(err,result) {
+		if (err) {
+			cb(err);
+			return;
+		}
+
+		var username = result.name;
+
+		common.getGalleryList(req,function(err,result) {
+			if (err) {
+				cb(err);
+				return;
+			}
+
+			var galleryList = result;
+			var options = {
+				filename: "galleryList.html",
+				doctype: "html"
+			};
+			var locals = {
+				title: "后台管理系统-相册列表",
+				username: username,
+				galleryList: galleryList
+			};
+			var fn = jade.compileFile("./view/admin/galleryList.jade",options);
+			var html = fn(locals);
+
+			cb(null,html);
+		});
+	});
+}
+
+exports.createGallery = function(req,cb) {
+	common.isSignedIn(req,function(err,result) {
+		if (err) {
+			cb(err);
+			return;
+		}
+
+		common.createGallery(req,cb);
+	});
+}
+
+exports.gallery = function(req,cb) {
+	getData(req,function(data) {
+		var galleryId = data.id;
+
+		if (!galleryId) {
+			logger.warn("[gallery error] -" + error.galleryIdNotProvided.discription);
+			cb(error.galleryIdNotProvided);
+			return;
+		}
+
+		common.getUserName(req,function(err,result) {
+			if (err) {
+				cb(err);
+				return;
+			}
+
+			var username = result.name;
+
+			common.getGallery(req,galleryId,function(err,result) {
+				if (err) {
+					cb(err);
+					return;
+				}
+
+				var gallery = result;
+
+				common.getImages(req,galleryId,function(err,result) {
+					if (err) {
+						cb(err);
+						return;
+					}
+
+					var images = result;
+					var options = {
+						filename: "gallery.html",
+						doctype: "html"
+					};
+					var locals = {
+						title: "后台管理系统-相册列表-相册",
+						username: username,
+						images: images,
+						gallery: gallery
+					};
+					var fn = jade.compileFile("./view/admin/gallery.jade",options);
+					var html = fn(locals);
+
+					cb(null,html);
+				});
+			});
+		});
+	});
+}
+
+exports.deleteGallery = function(req,cb) {
+	getData(req,function(data) {
+		var name = data.name;
+		var coverFile = data.coverFile;
+
+		if (!name) {
+			logger.warn(error.galleryNameNotProvided.discription);
+			cb(error.galleryNameNotProvided);
+			return;
+		}
+
+		if (!coverFile) {
+			logger.warn(error.coverFileNotProvided.discription);
+			cb(error.coverFileNotProvided);
+			return;
+		}
+
+		common.deleteGallery(req,name,coverFile,cb);
 	});
 }
