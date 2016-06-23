@@ -101,7 +101,7 @@ exports.update = function(req,cb) {
 	});
 }
 
-exports.delete = function(req,cb) {
+exports.delete = function(req,res,cb) {
 	getDataByURL(req,function(data) {
 		var id = data.id;
 

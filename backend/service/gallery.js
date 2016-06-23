@@ -63,11 +63,19 @@ service.delete = function(gallery,cb) {
 		}
 
 		if (result.length === 0) {
+			logger.error("[delete gallery error] - " + error.galleryNotExists.discription);
 			cb(error.galleryNotExists);
 			return;
 		}
 
-		Images.deleteByGallery(gallery,cb);
+		imagesDao.deleteByGallery(gallery,function(err,result) {
+			if (err) {
+				cb(err);
+				return;
+			}
+
+			cb(null,result);
+		});
 	});
 }
 

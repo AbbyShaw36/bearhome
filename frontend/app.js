@@ -1,5 +1,6 @@
 var http = require("http");
 var url = require("url");
+var config = require("./config");
 var router = require("./router/router").router;
 var admin = require("./web/admin");
 var logger = require("./util/logger").logger;
@@ -46,7 +47,7 @@ var handle = {
 		router(req,res,pathname,handle);
 	}
 
-	http.createServer(onRequest).listen(8888,function() {
+	http.createServer(onRequest).listen(global.config.port,function() {
 		logger.trace("Server has started.");
 	});
 })(router,handle);

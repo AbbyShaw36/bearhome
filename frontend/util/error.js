@@ -5,4 +5,4 @@ exports.galleryIdNotProvided = {type: "illegalArgument", description: "Gallery I
 exports.coverFileNotProvided = {type: "illegalArgument", description: "Gallery's cover file must provided"};
 exports.dirAlreadyExists = {type: "duplicateEntry", discription: "Directory already exists"};
 exports.internalServerErr = {type: "internalServerError", discription: "Internal server error"};
-exports.galleryNotExists = { type: "ResourceNotFound", discription: "Gallery not exists"};
+exports.galleryNotExists = {type: "ResourceNotFound", discription: "Gallery not exists"};

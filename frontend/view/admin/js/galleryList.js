@@ -13,14 +13,14 @@ $(function() {
 	});
 
 	$("#deleteBtn").on("click",function() {
-		if (!confrim("删除相册的同时会删除该相册的所有图片，是否确定继续？")) {
+		if (!confirm("删除相册的同时会删除该相册的所有图片，是否确定继续？")) {
 			return;
 		}
 
 		var li = $(this).parents("li");
-		var name = li.find("title").text();
-		var id = li.attr(id).split("_")[1];
-		var arr = li.find("img").attr("href").split("/");
+		var name = li.find(".title").text();
+		var id = li.attr("id").split("_")[1];
+		var arr = li.find("img").attr("src").split("/");
 		var coverFile = arr[arr.length-1];
 
 		var gallery = new Gallery();
@@ -63,7 +63,7 @@ $.extend(Gallery.prototype,{
 					xhrFields: {withCredentials: true},
 					success : function(data){
 						alert("创建成功！");
-						localtion.reload();
+						location.reload();
 					},
 					error : function(res) {
 						alert("创建失败！");
@@ -82,14 +82,15 @@ $.extend(Gallery.prototype,{
 	},
 	delete : function() {
 		var that = this;
-
+		console.log(123);
 		$.ajax({
-			url : gp.jumpPath + "deleteGallery?name=" + that.name "&coverFile=" + that.coverFile,
+			url : gp.jumpPath + "deleteGallery?name=" + that.name + "&coverFile=" + that.coverFile,
 			type : "DELETE",
 			dataType : "json",
 			crossDomain : true,
 			xhrFields: {withCredentials: true},
 			success : function(data) {
+				console.log("delete gallery dir success");
 				$.ajax({
 					url : gp.operatePath + "gallery/delete?id=" + that.id,
 					type : "DELETE",
@@ -98,7 +99,7 @@ $.extend(Gallery.prototype,{
 					xhrFields: {withCredentials: true},
 					success : function(data){
 						alert("删除成功！");
-						localtion.reload();
+						// location.reload();
 					},
 					error : function(res) {
 						alert("删除失败！");

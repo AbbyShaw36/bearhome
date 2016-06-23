@@ -79,12 +79,15 @@ dao.update = function(gallery,cb) {
 
 dao.delete = function(gallery,cb) {
 	var id = gallery.getId();
-	var queryText = "DELETE FROM gallery WHERE id = " + id;
+	var sql = "DELETE FROM gallery WHERE galleryId = ?";
+	var inserts = [id];
+	sql = mysql.format(sql,inserts);
 
-	connection.query(queryText,function(err,result) {
+	connection.query(sql,function(err,result) {
 		var retErr = null;
 
 		if (err) {
+			logger.error("[delete gallery error] - " + err.message);
 			retErr = commonErr.internalServerErr;
 		}
 

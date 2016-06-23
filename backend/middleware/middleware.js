@@ -5,9 +5,9 @@ var error = require("../errors/common");
 var logger = require("../util/logger").logger;
 
 exports.middleware = function(req,res,pathname,handle) {
-	res.setHeader('Access-Control-Allow-Origin',"http://127.0.0.1:8888");
+	res.setHeader('Access-Control-Allow-Origin',global.config.host + ":" + global.config.port);
 	res.setHeader('Access-Control-Allow-Credentials', true);
-	res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+	res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
 
 	if (req.method === "OPTIONS") {
 		res.statusCode = statusCode.success;
@@ -25,9 +25,9 @@ exports.middleware = function(req,res,pathname,handle) {
 
 		return;
 	}
-	logger.debug(req.method);
+	
 	var fun = handle[pathname][req.method];
-	console.log(fun);
+	
 	// 请求方式是否正确
 	if (typeof fun !== "function") {
 		logger.warn("Method of the request for " + pathname + " not allowed");

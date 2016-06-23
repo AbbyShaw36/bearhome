@@ -11,9 +11,7 @@ var options = {
 	port : "3000",
 	method : "GET"
 }
-var galleryPath = "./view/gallery/";
-var coverPath = "../gallery/cover/";
-var defaultCover = "default.png";
+
 var common = {};
 
 exports.common = common;
@@ -190,11 +188,11 @@ common.createGallery = function(req,cb) {
 		}
 
 		var name = sha1(data.name);
-		var path = galleryPath + name;
+		var path = global.config.galleryPath + name;
 		var result = {
 			galleryPath : path,
 			coverPath : coverPath,
-			coverFile : defaultCover
+			coverFile : global.config.defaultCover
 		}
 
 		that.createDir(path,function(err) {
@@ -218,8 +216,7 @@ common.createDir = function(path,cb) {
 
 		fs.mkdir(path,function(err) {
 			if (err) {
-				console.log(err);
-				logger.error("[create dir error] - " + error.message);
+				logger.error("[create dir error] - " + err);
 				cb(error.internalServerErr);
 				return;
 			}
@@ -287,29 +284,85 @@ common.getImages = function(req,galleryId,cb) {
 }
 
 common.deleteGallery = function(req,galleryName,coverFile,cb) {
+	var galleryPath = global.config.galleryPath + sha1(galleryName);
 
+	this.deleteDir(galleryPath,function(err) {
+		if (err) {
+			cb(err);
+			return;
+		}
+
+		if (coverFile === global.config.defaultCover) {
+			cb(null,{});
+			logger.trace("finish delete gallery");
+			return;
+		}
+		
+		var coverPath = global.config.coverPath + coverFile;
+
+		fs.unlink(coverPath,function(err) {
+			if (err) {
+				logger.error("[delete file error] - " + err);
+				cb(error.internalServerErr);
+				return;
+			}
+
+			cb(null,{});
+			logger.trace("finish delete gallery");
+		});
+	});
 }
 
-common.deleteDir = function() {
+common.deleteDir = function(path,cb) {
 	fs.exists(path,function(exists) {
 		if (!exists) {
-			logger.warn(error.galleryNotExists.discription);
+			logger.warn("[delete dir] - " + error.galleryNotExists.discription);
 			cb(error.galleryNotExists);
 			return;
 		}
 
+		logger.trace("[delete dir] - path exists");
+
 		fs.readdir(path,function(err,files) {
+			if (err) {
+				logger.error("[read dir error] - " + err);
+				cb(error.internalServerErr);
+				return;
+			}
+			
 			if (files.length === 0) {
 				fs.rmdir(path,function(err) {
 					if (err) {
 						logger.error("[delete dir error] - " + err);
 						cb(error.internalServerErr);
+						return;
 					}
+
+					logger.trace("[delete dir] - success");
+					cb(null);
 				});
 				return;
 			}
 
-			files.each()
+			logger.trace("[read dir] - dir has files");
+
+			var i = 0;
+
+			files.foreach(function(file,index) {
+				fs.unlink(path + "/" + file,function(err) {
+					if (err) {
+						logger.error("[delete file error] - " + err);
+						cb(error.internalServerErr);
+					}
+					
+					i++;
+
+					if (i === files.length) {
+						logger.trace("[delete files in dir] - finish");
+						cb(null);
+					}
+				});
+			});
 		});
 	});
 }

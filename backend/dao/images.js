@@ -23,3 +23,21 @@ dao.get = function(gallery,cb) {
 		cb(retErr,result);
 	});
 }
+
+dao.deleteByGallery = function(gallery,cb) {
+	var galleryId = gallery.getId();
+	var sql = "DELETE FROM images WHERE galleryId = ?";
+	var inserts = [galleryId];
+	sql = mysql.format(sql,inserts);
+
+	connection.query(sql,function(err,result) {
+		var retErr = null;
+
+		if (err) {
+			logger.warn("[delete images error] - " + err.message);
+			retErr = commonErr.internalServerErr;
+		}
+
+		cb(retErr,result);
+	});
+}

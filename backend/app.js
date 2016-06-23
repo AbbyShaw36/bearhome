@@ -1,6 +1,7 @@
 var http = require("http");
 var url = require("url");
 var mongoose = require("mongoose");
+var config = require("./config");
 var router = require("./router/router").router;
 var logger = require("./util/logger").logger;
 var account = require("./web/account");
@@ -60,6 +61,9 @@ var handle = {
 	},
 	"/admin/gallery/get" : {
 		"GET" : gallery.get
+	},
+	"/admin/gallery/delete" : {
+		"DELETE" : gallery.delete
 	}
 };
 
@@ -85,7 +89,7 @@ db.once("open",function() {
 		router(req,res,pathname,handle);
 	}
 
-	http.createServer(onRequest).listen(3000,function() {
+	http.createServer(onRequest).listen(global.config.port,function() {
 		logger.trace("Server has started.");
 	});
 })(router,handle);
