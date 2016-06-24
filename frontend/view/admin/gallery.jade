@@ -1,4 +1,5 @@
 extends ./layout
+
 block content
 	// 主体内容开始
 	#mainContent
@@ -12,22 +13,28 @@ block content
 			.title
 				h3 相册：
 					span= gallery.galleryName
+					input(type="hidden", value= gallery.galleryId)#galleryId
+					input(type="hidden", value= gallery.galleryPath)#galleryPath
 				a(href= "galleryList.html") 返回相册列表
 			.add
 				h3 添加图片：
 				label
 					span 选择图片：
-					input(type="file")
-				input(type="button", value="上传")
+					input(type="file")#addInput
+				.imgBox
+				input(type="button", value="上传")#addBtn
 			.imgList
 				if (images.length === 0)
 					p 该相册还没有添加任何图片。
 				else
 					ul
 						each item, i in images
-							li(id= item.id)
+							li(id= "img_" + item.id)
 								.imgBox
-									img(src= gallery.galleryPath + item.filePath)
+									img(src= gallery.galleryPath + item.file)
 								.btnBox
 									a.delete(href="#", title="删除该图片") 删除
 									a.setCover(href="#", title="设为封面") 封面
+
+block script
+	script(src="js/gallery.js")

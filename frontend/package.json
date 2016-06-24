@@ -12,6 +12,7 @@
 		"querystring" : "latest",
 		"url" : "latest",
 		"sha1" : "latest",
-		"extend" : "latest"
+		"extend" : "latest",
+		"formidable" : "latest"
 	}
 }

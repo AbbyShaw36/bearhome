@@ -64,6 +64,15 @@ var handle = {
 	},
 	"/admin/gallery/delete" : {
 		"DELETE" : gallery.delete
+	},
+	"/admin/gallery/updateName" : {
+		"PUT" : gallery.updateName
+	},
+	"/admin/gallery/addImg" : {
+		"POST" : gallery.addImg
+	},
+	"/admin/gallery/deleteImg" : {
+		"DELETE" : gallery.deleteImg
 	}
 };
 

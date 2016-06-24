@@ -35,6 +35,15 @@ var handle = {
 	},
 	"/admin/deleteGallery" : {
 		"DELETE" : admin.deleteGallery
+	},
+	"/admin/updateGallery" : {
+		"PUT" : admin.updateGallery
+	},
+	"/admin/addImg" : {
+		"POST" : admin.addImg
+	},
+	"/admin/deleteImg" : {
+		"DELETE" : admin.deleteImg
 	}
 };
 

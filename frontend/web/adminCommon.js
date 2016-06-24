@@ -3,12 +3,13 @@ var extend = require("extend");
 var fs = require("fs");
 var sha1 = require("sha1");
 var querystring = require("querystring");
+var formidable = require("formidable");
 var getData = require("../util/getData").byBody;
 var logger = require("../util/logger").logger;
 var error = require("../util/error");
 var options = {
-	host : "127.0.0.1",
-	port : "3000",
+	host : global.config.backend_host,
+	port : global.config.backend_port,
 	method : "GET"
 }
 
@@ -188,10 +189,10 @@ common.createGallery = function(req,cb) {
 		}
 
 		var name = sha1(data.name);
-		var path = global.config.galleryPath + name;
+		var path = "./view/" + global.config.galleryPath + name + "/";
 		var result = {
-			galleryPath : path,
-			coverPath : coverPath,
+			galleryPath : "../" + global.config.galleryPath + name + "/",
+			coverPath : global.config.coverPath,
 			coverFile : global.config.defaultCover
 		}
 
@@ -363,6 +364,115 @@ common.deleteDir = function(path,cb) {
 					}
 				});
 			});
+		});
+	});
+}
+
+common.updateGallery = function(req,cb) {
+	getData(req,function(data) {
+		data = querystring.parse(data);
+
+		var oldName = data.oldName;
+		var newName = data.newName;
+
+		if (!oldName) {
+			logger.warn("[update gallery error] - " + error.galleryOldNameNotProvided.discription);
+			cb(error.galleryOldNameNotProvided);
+			return;
+		}
+
+		if (!newName) {
+			logger.warn("[update gallery error] - " + error.galleryNewNameNotProvided.discription);
+			cb(error.galleryNewNameNotProvided);
+			return;
+		}
+
+		var oldGalleryPath = global.config.galleryPath + sha1(oldName);
+		var newGalleryPath = global.config.galleryPath + sha1(newName);
+		console.log(oldGalleryPath);
+		console.log(newGalleryPath);
+
+		fs.exists(oldGalleryPath,function(exists) {
+			if (!exists) {
+				logger.warn("[update gallery error] - " + error.galleryNotExists.discription);
+				cb(error.galleryNotExists);
+				return;
+			}
+
+			logger.trace("[update gallery] - gallery exists");
+
+			fs.rename(oldGalleryPath,newGalleryPath,function(err) {
+				if (err) {
+					logger.error("[update gallery error] - " + err);
+					cb(error.internalServerErr);
+					return;
+				}
+
+				logger.trace("[update gallery] - success");
+
+				cb(null,{galleryPath : newGalleryPath});
+			});
+		});
+	});
+}
+
+common.addImg = function(req,cb) {
+	var form = new formidable.IncomingForm();
+
+	form.parse(req,function(err,fields,files) {
+		var galleryPath = fields.galleryPath.replace("..","./view");
+		var file = files.file;
+		var fileType = file.type.split("/")[1];
+		var imgFile = new Date().getTime().toString() + Math.floor(Math.random() * 100).toString() + "." + fileType;
+		var path = galleryPath + "/" + imgFile;
+
+		if (!file.type.match("image")) {
+			logger.warn("[add image error] - " + error.fileTypeNotAllowed.discription);
+			cb(error.fileTypeNotAllowed);
+			return;
+		}
+
+		fs.readFile(file.path,function(err,data) {
+			fs.exists(galleryPath,function(exists) {
+				if (!exists) {
+					logger.warn("[add image error] - " + error.galleryNotExists.discription);
+					cb(error.galleryNotExists);
+					return;
+				}
+
+				fs.writeFile(path,data,function(err) {
+					if (err) {
+						logger.error("[add image error] - " + err);
+						cb(error.internalServerErr);
+						return;
+					}
+
+					logger.trace("[add image] - success");
+					cb(null,{imgFile: imgFile});
+				});
+			});
+		});
+	});
+}
+
+common.deleteImg = function(req,imgPath,cb) {
+	imgPath = imgPath.replace("..","./view");
+
+	fs.exists(imgPath,function(exists) {
+		if (!exists) {
+			logger.warn("[delete image error] - " + error.imgNotExists.discription);
+			cb(error.imgNotExists);
+			return;
+		}
+
+		fs.unlink(imgPath,function(err) {
+			if (err) {
+				logger.warn("[delete image error] - " + err);
+				cb(error.internalServerErr);
+				return;
+			}
+
+			cb(null,{});
 		});
 	});
 }

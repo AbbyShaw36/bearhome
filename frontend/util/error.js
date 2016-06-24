@@ -1,8 +1,13 @@
 exports.methodNotAllowed = {type: "methodNotAllowed", discription: "Request method not allowed"};
 exports.articleIdNotProvided = {type: "illegalArgument", description: "Article ID must provided"};
 exports.galleryNameNotProvided = {type: "illegalArgument", description: "Gallery name must provided"};
+exports.galleryOldNameNotProvided = {type: "illegalArgument", description: "Gallery old name must provided"};
+exports.galleryNewNameNotProvided = {type: "illegalArgument", description: "Gallery new name must provided"};
 exports.galleryIdNotProvided = {type: "illegalArgument", description: "Gallery ID must provided"};
 exports.coverFileNotProvided = {type: "illegalArgument", description: "Gallery's cover file must provided"};
 exports.dirAlreadyExists = {type: "duplicateEntry", discription: "Directory already exists"};
 exports.internalServerErr = {type: "internalServerError", discription: "Internal server error"};
 exports.galleryNotExists = {type: "ResourceNotFound", discription: "Gallery not exists"};
+exports.fileTypeNotAllowed = {type: "illegalArgument", discription: "Upload file type not allowed"};
+exports.imgPathNotProvided = {type: "illegalArgument", description: "Image file path must provided"};
+exports.imgNotExists = {type: "ResourceNotFound", discription: "Image not exists"};

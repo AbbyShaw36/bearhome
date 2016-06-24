@@ -61,15 +61,19 @@ dao.create = function(gallery,cb) {
 	});
 }
 
-dao.update = function(gallery,cb) {
+dao.updateName = function(gallery,cb) {
 	var id = gallery.getId();
 	var name = gallery.getName();
-	var queryText = util.format("UPDATE gallery SET name = '%s' WHERE id = %d",name,id);
+	var galleryPath = gallery.getGalleryPath();
+	var sql = "UPDATE gallery SET galleryName = ?, galleryPath = ? WHERE galleryId = ?";
+	var inserts = [name,galleryPath,id];
+	sql = mysql.format(sql,inserts);
 
-	connection.query(queryText,function(err,result) {
+	connection.query(sql,function(err,result) {
 		var retErr = null;
 
 		if (err) {
+			logger.error("[update gallery name error] - " + err.message);
 			retErr = commonErr.internalServerErr;
 		}
 

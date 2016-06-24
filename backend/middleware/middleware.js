@@ -5,7 +5,9 @@ var error = require("../errors/common");
 var logger = require("../util/logger").logger;
 
 exports.middleware = function(req,res,pathname,handle) {
-	res.setHeader('Access-Control-Allow-Origin',global.config.host + ":" + global.config.port);
+	var origin = "http://" + global.config.frontend_hosts + ":" + global.config.frontend_port;
+	
+	res.setHeader('Access-Control-Allow-Origin',origin);
 	res.setHeader('Access-Control-Allow-Credentials', true);
 	res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
 

@@ -42,12 +42,14 @@ service.create = function(gallery,cb) {
 	galleryDao.create(gallery,cb);
 }
 
-service.update = function(gallery,cb) {
-	galleryDao.update(gallery,function(err,result) {
+service.updateName = function(gallery,cb) {
+	galleryDao.updateName(gallery,function(err,result) {
 		var retErr = null;
+
 		if (err) {
 			retErr = err;
 		} else if (result.length === 0) {
+			logger.warn("[update gallery name error] - " + error.galleryNotExists.discription);
 			retErr = error.galleryNotExists;
 		}
 
@@ -89,6 +91,27 @@ service.getImages = function(gallery,cb) {
 		if (result.length === 0) {
 			logger.warn("[get images error] - " + error.imagesNotExists.discription);
 			cb(error.imagesNotExists);
+			return;
+		}
+
+		cb(null,result);
+	});
+}
+
+service.addImg = function(image,cb) {
+	imagesDao.add(image,cb);
+}
+
+service.deleteImg = function(image,cb) {
+	imagesDao.delete(image,function(err,result) {
+		if (err) {
+			cb(err);
+			return;
+		}
+
+		if (result.length === 0) {
+			logger.warn("[deleteImg error] - " + error.imageNotExists.discription);
+			cb(error.imageNotExists);
 			return;
 		}
 

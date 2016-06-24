@@ -1,5 +1,6 @@
 var service = require("../service/gallery").service;
 var Gallery = require("../model/gallery").Gallery;
+var Image = require("../model/image").Image;
 var error = require("../errors/gallery");
 var getData = require("../util/getData");
 var getDataByBody = getData.byBody;
@@ -78,10 +79,11 @@ exports.create = function(req,res,cb) {
 	});
 }
 
-exports.update = function(req,cb) {
+exports.updateName = function(req,res,cb) {
 	getDataByBody(req,function(data) {
 		var id = data.id;
 		var name = data.name;
+		var galleryPath = data.galleryPath;
 
 		if (!id) {
 			cb(error.galleryIdNotProvided);
@@ -93,11 +95,17 @@ exports.update = function(req,cb) {
 			return;
 		}
 
+		if (!galleryPath) {
+			cb(error.galleryPathNotProvided);
+			return;
+		}
+
 		var gallery = new Gallery();
 		gallery.setId(id);
 		gallery.setName(name);
+		gallery.setGalleryPath(galleryPath);
 
-		service.update(gallery,cb);
+		service.updateName(gallery,cb);
 	});
 }
 
@@ -129,6 +137,55 @@ exports.getImages = function(req,res,cb) {
 		var gallery = new Gallery();
 		gallery.setId(id);
 
-		service.getImages(gallery,cb);
+		service.getImages(gallery,function(err,result) {
+			if (err) {
+				cb(err);
+				return;
+			}
+
+			cb(null,{images: result});
+		});
+	});
+}
+
+exports.addImg = function(req,res,cb) {
+	getDataByBody(req,function(data) {
+		var galleryId = data.galleryId;
+		var file = data.file;
+
+		if (!galleryId) {
+			logger.warn("[addImg error] - " + error.galleryIdNotProvided.discription);
+			cb(error.galleryIdNotProvided);
+			return;
+		}
+
+		if (!file) {
+			logger.warn("[addImg error] - " + error.imageFileNotProvided.discription);
+			cb(error.imageFileNotProvided);
+			return;
+		}
+
+		var image = new Image();
+		image.setGalleryId(galleryId);
+		image.setFile(file);
+
+		service.addImg(image,cb);
+	});
+}
+
+exports.deleteImg = function(req,res,cb) {
+	getDataByURL(req,function(data) {
+		var imgId = data.id;
+
+		if (!imgId) {
+			logger.warn("[deleteImg error] - " + error.imageIdNotProvided.discription);
+			cb(error.imageIdNotProvided);
+			return;
+		}
+
+		var image = new Image();
+		image.setId(imgId);
+
+		service.deleteImg(image,cb);
 	});
 }

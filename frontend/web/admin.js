@@ -286,22 +286,72 @@ exports.gallery = function(req,cb) {
 }
 
 exports.deleteGallery = function(req,cb) {
-	getData(req,function(data) {
-		var name = data.name;
-		var coverFile = data.coverFile;
-
-		if (!name) {
-			logger.warn(error.galleryNameNotProvided.discription);
-			cb(error.galleryNameNotProvided);
+	common.isSignedIn(req,function(err,result) {
+		if (err) {
+			cb(err);
 			return;
 		}
 
-		if (!coverFile) {
-			logger.warn(error.coverFileNotProvided.discription);
-			cb(error.coverFileNotProvided);
+		getData(req,function(data) {
+			var name = data.name;
+			var coverFile = data.coverFile;
+
+			if (!name) {
+				logger.warn(error.galleryNameNotProvided.discription);
+				cb(error.galleryNameNotProvided);
+				return;
+			}
+
+			if (!coverFile) {
+				logger.warn(error.coverFileNotProvided.discription);
+				cb(error.coverFileNotProvided);
+				return;
+			}
+
+			common.deleteGallery(req,name,coverFile,cb);
+		});
+	});
+}
+
+exports.updateGallery = function(req,cb) {
+	common.isSignedIn(req,function(err,result) {
+		if (err) {
+			cb(err);
 			return;
 		}
 
-		common.deleteGallery(req,name,coverFile,cb);
+		common.updateGallery(req,cb);
+	});
+}
+
+exports.addImg = function(req,cb) {
+	common.isSignedIn(req,function(err,result) {
+		if (err) {
+			cb(err);
+			return;
+		}
+
+		common.addImg(req,cb);
+	});
+}
+
+exports.deleteImg = function(req,cb) {
+	common.isSignedIn(req,function(err,result) {
+		if (err) {
+			cb(err);
+			return;
+		}
+
+		getData(req,function(data) {
+			var imgPath = data.imgPath;
+
+			if (!imgPath) {
+				logger.warn(error.imgPathNotProvided.discription);
+				cb(error.imgPathNotProvided);
+				return;
+			}
+
+			common.deleteImg(req,imgPath,cb);
+		});
 	});
 }

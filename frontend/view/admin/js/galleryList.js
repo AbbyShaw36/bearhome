@@ -14,7 +14,7 @@ $(function() {
 
 	$("#deleteBtn").on("click",function() {
 		if (!confirm("删除相册的同时会删除该相册的所有图片，是否确定继续？")) {
-			return;
+			return false;
 		}
 
 		var li = $(this).parents("li");
@@ -28,6 +28,39 @@ $(function() {
 		gallery.setId(id);
 		gallery.setCoverFile(coverFile);
 		gallery.delete();
+
+		return false;
+	});
+
+	$("#updateBtn").on("click",function() {
+		var li = $(this).parents("li");
+		var id = li.attr("id").split("_")[1];
+		var oldName = li.find(".title").text();
+		var newName = prompt("请输入新名称",oldName);
+
+		if (newName === null) {
+			return false;
+		}
+
+		newName = htmlDecode(htmlEncode($.trim(newName)));
+
+		if (newName === "") {
+			alert("请输入该相册的新名称！");
+			return false;
+		}
+
+		if (newName === oldName) {
+			alert("修改成功！");
+			return false;
+		}
+
+		var gallery = new Gallery();
+		gallery.setId(id);
+		gallery.setOldName(oldName);
+		gallery.setNewName(newName);
+		gallery.update();
+
+		return false;
 	});
 });
 
@@ -43,6 +76,12 @@ $.extend(Gallery.prototype,{
 	setCoverFile : function(fileName) {
 		this.coverFile = fileName;
 	},
+	setOldName : function(name) {
+		this.oldName = name;
+	},
+	setNewName : function(name) {
+		this.newName = name;
+	},
 	create: function() {
 		var that = this;
 
@@ -54,6 +93,7 @@ $.extend(Gallery.prototype,{
 			crossDomain : true,
 			xhrFields: {withCredentials: true},
 			success : function(data) {
+				console.log("create gallery dir success");
 				$.ajax({
 					url : gp.operatePath + "gallery/create",
 					type : "POST",
@@ -82,7 +122,7 @@ $.extend(Gallery.prototype,{
 	},
 	delete : function() {
 		var that = this;
-		console.log(123);
+		
 		$.ajax({
 			url : gp.jumpPath + "deleteGallery?name=" + that.name + "&coverFile=" + that.coverFile,
 			type : "DELETE",
@@ -99,7 +139,7 @@ $.extend(Gallery.prototype,{
 					xhrFields: {withCredentials: true},
 					success : function(data){
 						alert("删除成功！");
-						// location.reload();
+						location.reload();
 					},
 					error : function(res) {
 						alert("删除失败！");
@@ -108,6 +148,40 @@ $.extend(Gallery.prototype,{
 			},
 			error : function(res) {
 				alert("删除失败！");
+			}
+		});
+	},
+	update : function() {
+		var that = this;
+
+		$.ajax({
+			url : gp.jumpPath + "updateGallery",
+			type : "PUT",
+			dataType : "json",
+			data : "oldName=" + that.oldName + "&newName=" + that.newName,
+			crossDomain : true,
+			xhrFields : {withCredentials: true},
+			success : function(data) {
+				console.log("update gallery dir success");
+
+				$.ajax({
+					url : gp.operatePath + "gallery/updateName",
+					type : "PUT",
+					dataType : "json",
+					data : "id=" + that.id + "&name=" + that.newName + "&galleryPath=" + data.galleryPath,
+					crossDomain : true,
+					xhrFields: {withCredentials: true},
+					success : function(data) {
+						alert("修改成功！");
+						location.reload();
+					},
+					error : function(res) {
+						alert("修改失败！");
+					}
+				});
+			},
+			error : function(res) {
+				alert("修改失败！");
 			}
 		});
 	}

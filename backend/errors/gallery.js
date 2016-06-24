@@ -5,3 +5,5 @@ exports.galleryPathNotProvided = {type: "illegalArgument", discription: "gallery
 exports.coverPathNotProvided = {type: "illegalArgument", discription: "gallery's cover path must provided"};
 exports.coverFileNotProvided = {type: "illegalArgument", discription: "gallery's cover file must provided"};
 exports.galleryIdNotProvided = {type: "illegalArgument", discription: "gallery ID must provided"};
+exports.imageFileNotProvided = {type: "illegalArgument", discription: "Image file must provided"};
+exports.imageIdNotProvided = {type: "illegalArgument", discription: "Image ID must provided"};
