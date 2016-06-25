@@ -12,7 +12,7 @@ block content
 		.content
 			.title
 				h3 相册：
-					span= gallery.galleryName
+					span#galleryName= gallery.galleryName
 					input(type="hidden", value= gallery.galleryId)#galleryId
 					input(type="hidden", value= gallery.galleryPath)#galleryPath
 				a(href= "galleryList.html") 返回相册列表

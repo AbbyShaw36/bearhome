@@ -103,18 +103,62 @@ service.addImg = function(image,cb) {
 }
 
 service.deleteImg = function(image,cb) {
-	imagesDao.delete(image,function(err,result) {
+	imagesDao.getById(image,function(err,result) {
 		if (err) {
 			cb(err);
 			return;
 		}
 
 		if (result.length === 0) {
-			logger.warn("[deleteImg error] - " + error.imageNotExists.discription);
+			logger.warn("[set cover error] - " + error.imageNotExists.discription);
 			cb(error.imageNotExists);
 			return;
 		}
 
-		cb(null,result);
+		console.log(result);
+
+		image.setGalleryId(result[0].galleryId);
+		image.setFile(result[0].file);
+
+		galleryDao.checkCover(image,function(err,result) {
+			if (err) {
+				cb(err);
+				return;
+			}
+
+			imagesDao.delete(image,cb);
+		});
+	});
+}
+
+service.setCover = function(gallery,image,cb) {
+	imagesDao.getById(image,function(err,result) {
+		if (err) {
+			cb(err)
+			return;
+		}
+
+		if (result.length === 0) {
+			logger.warn("[set cover error] - " + error.imageNotExists.discription);
+			cb(error.imageNotExists);
+			return;
+		}
+
+		var file = result[0].file;
+		gallery.setCover(file);
+
+		galleryDao.setCover(gallery,function(err,result) {
+			if (err) {
+				cb(err);
+				return;
+			}
+
+			if (result.length === 0) {
+				logger.warn("[set cover error] - " + error.galleryNotExists.discription);
+				cb(error.galleryNotExists);
+			}
+
+			cb(null,result);
+		});
 	});
 }

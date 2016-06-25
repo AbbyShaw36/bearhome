@@ -44,8 +44,6 @@ exports.create = function(req,res,cb) {
 	getDataByBody(req,function(data) {
 		var name = data.name;
 		var galleryPath = data.galleryPath;
-		var coverPath = data.coverPath;
-		var coverFile = data.coverFile;
 
 		console.log(name);
 
@@ -59,21 +57,9 @@ exports.create = function(req,res,cb) {
 			return;
 		}
 
-		if (!coverPath) {
-			cb(error.coverPathNotProvided);
-			return;
-		}
-
-		if (!coverFile) {
-			cb(error.coverFileNotProvided);
-			return;
-		}
-
 		var gallery = new Gallery();
 		gallery.setName(name);
 		gallery.setGalleryPath(galleryPath);
-		gallery.setCoverPath(coverPath);
-		gallery.setCoverFile(coverFile);
 
 		service.create(gallery,cb);
 	});
@@ -187,5 +173,31 @@ exports.deleteImg = function(req,res,cb) {
 		image.setId(imgId);
 
 		service.deleteImg(image,cb);
+	});
+}
+
+exports.setCover = function(req,res,cb) {
+	getDataByBody(req,function(data) {
+		var galleryId = data.id;
+		var coverId = data.coverId;
+
+		if (!galleryId) {
+			logger.warn("[set cover error] - " + error.galleryIdNotProvided.discription);
+			cb(error.galleryIdNotProvided);
+			return;
+		}
+
+		if (!coverId) {
+			logger.warn("[set cover error] - " + error.coverIdNotProvided.discription);
+			cb(error.coverIdNotProvided);
+		}
+
+		var gallery = new Gallery();
+		gallery.setId(galleryId);
+
+		var image = new Image();
+		image.setId(coverId);
+
+		service.setCover(gallery,image,cb);
 	});
 }

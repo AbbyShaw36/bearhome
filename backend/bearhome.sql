@@ -33,8 +33,7 @@ CREATE TABLE IF NOT EXISTS `gallery` (
 	`galleryId` int(11) NOT NULL AUTO_INCREMENT,
 	`galleryName` varchar(255) NOT NULL,
 	`galleryPath` varchar(255) NOT NULL,
-	`coverPath` varchar(255) DEFAULT NULL,
-	`coverFile` varchar(255) DEFAULT NULL,
+	`cover` varchar(255) DEFAULT NULL,
 	PRIMARY KEY (`galleryId`),
 	UNIQUE (`galleryName`)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8;

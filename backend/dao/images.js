@@ -90,9 +90,27 @@ dao.delete = function(image,cb) {
 		var retErr = null;
 
 		if (err) {
-			logger.error("[delete iamge error] - " + err.message);
+			logger.error("[delete image error] - " + err.message);
 			retErr = commonErr.internalServerErr;
-			return;
+		}
+
+		cb(retErr,result);
+	});
+}
+
+dao.getById = function(image,cb) {
+	var id = image.getId();
+
+	var sql = "SELECT * FROM images WHERE id = ?";
+	var inserts = [Number(id)];
+	sql = mysql.format(sql,inserts);
+
+	connection.query(sql,function(err,result) {
+		var retErr = null;
+
+		if (err) {
+			logger.error("[get by id err] - " + err.message);
+			retErr = commonErr.internalServerErr;
 		}
 
 		cb(retErr,result);

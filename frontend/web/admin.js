@@ -294,7 +294,6 @@ exports.deleteGallery = function(req,cb) {
 
 		getData(req,function(data) {
 			var name = data.name;
-			var coverFile = data.coverFile;
 
 			if (!name) {
 				logger.warn(error.galleryNameNotProvided.discription);
@@ -302,13 +301,7 @@ exports.deleteGallery = function(req,cb) {
 				return;
 			}
 
-			if (!coverFile) {
-				logger.warn(error.coverFileNotProvided.discription);
-				cb(error.coverFileNotProvided);
-				return;
-			}
-
-			common.deleteGallery(req,name,coverFile,cb);
+			common.deleteGallery(req,name,cb);
 		});
 	});
 }

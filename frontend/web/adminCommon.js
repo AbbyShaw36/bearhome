@@ -191,9 +191,7 @@ common.createGallery = function(req,cb) {
 		var name = sha1(data.name);
 		var path = "./view/" + global.config.galleryPath + name + "/";
 		var result = {
-			galleryPath : "../" + global.config.galleryPath + name + "/",
-			coverPath : global.config.coverPath,
-			coverFile : global.config.defaultCover
+			galleryPath : "../" + global.config.galleryPath + name + "/"
 		}
 
 		that.createDir(path,function(err) {
@@ -284,7 +282,7 @@ common.getImages = function(req,galleryId,cb) {
 	req.end();
 }
 
-common.deleteGallery = function(req,galleryName,coverFile,cb) {
+common.deleteGallery = function(req,galleryName,cb) {
 	var galleryPath = global.config.galleryPath + sha1(galleryName);
 
 	this.deleteDir(galleryPath,function(err) {
@@ -292,25 +290,9 @@ common.deleteGallery = function(req,galleryName,coverFile,cb) {
 			cb(err);
 			return;
 		}
-
-		if (coverFile === global.config.defaultCover) {
-			cb(null,{});
-			logger.trace("finish delete gallery");
-			return;
-		}
 		
-		var coverPath = global.config.coverPath + coverFile;
-
-		fs.unlink(coverPath,function(err) {
-			if (err) {
-				logger.error("[delete file error] - " + err);
-				cb(error.internalServerErr);
-				return;
-			}
-
-			cb(null,{});
-			logger.trace("finish delete gallery");
-		});
+		cb(null,{});
+		logger.trace("finish delete gallery");
 	});
 }
 

@@ -23,7 +23,7 @@ block content
 						each item,i in galleryList
 							li(id= "gallery_" + item.galleryId)
 								.imgBox
-									img(src= item.coverPath + item.coverFile)
+									img(src= item.cover ? item.galleryPath + item.cover : "/gallery/cover/default.png")
 								.title= item.galleryName
 								.btnBox
 									a(href="#", title="修改该相册")#updateBtn 修改

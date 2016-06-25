@@ -58,6 +58,20 @@ $(function() {
 
 		return false;
 	});
+
+	$(".imgList li .setCover").on("click",function() {
+		if (!confirm("是否确定将该图片设为相册封面？")) {
+			return false;
+		}
+
+		var coverId = $(this).parents("li").attr("id").split("_")[1];
+		var galleryId = $("#galleryId").val();
+
+		var gallery = new Gallery();
+		gallery.setId(galleryId);
+		gallery.setCoverId(coverId);
+		gallery.setCover();
+	});
 });
 
 function Image() {}
@@ -152,6 +166,37 @@ $.extend(Image.prototype,{
 			},
 			error : function(res) {
 				alert("删除失败！");
+				return false;
+			}
+		});
+	}
+});
+
+function Gallery() {}
+
+$.extend(Gallery.prototype,{
+	setId : function(id) {
+		this.id = id;
+	},
+	setCoverId : function(id) {
+		this.coverId = id;
+	},
+	setCover : function() {
+		var that = this;
+
+		$.ajax({
+			url : gp.operatePath + "gallery/setCover",
+			type : "PUT",
+			dataType : "json",
+			data : "id=" + that.id + "&coverId=" + that.coverId,
+			crossDomain : true,
+			xhrFields : {withCredentials : true},
+			success : function(data) {
+				alert("设置封面成功！");
+				return false;
+			},
+			error : function(res) {
+				alert("设置封面失败！");
 				return false;
 			}
 		});

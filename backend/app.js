@@ -73,6 +73,9 @@ var handle = {
 	},
 	"/admin/gallery/deleteImg" : {
 		"DELETE" : gallery.deleteImg
+	},
+	"/admin/gallery/setCover" : {
+		"PUT" : gallery.setCover
 	}
 };
 

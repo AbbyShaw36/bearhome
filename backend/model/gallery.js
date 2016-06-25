@@ -11,8 +11,5 @@ Gallery.prototype.getId = function() { return this.id; }
 Gallery.prototype.setGalleryPath = function(path) { this.galleryPath = path; }
 Gallery.prototype.getGalleryPath = function() { return this.galleryPath; }
 
-Gallery.prototype.setCoverPath = function(path) { this.coverPath = path; }
-Gallery.prototype.getCoverPath = function() { return this.coverPath; }
-
-Gallery.prototype.setCoverFile = function(fileName) { this.coverFile = fileName; }
-Gallery.prototype.getCoverFile = function() { return this.coverFile; }
+Gallery.prototype.setCover = function(path) { this.cover = path; }
+Gallery.prototype.getCover = function() { return this.cover; }

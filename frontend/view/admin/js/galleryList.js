@@ -98,7 +98,7 @@ $.extend(Gallery.prototype,{
 					url : gp.operatePath + "gallery/create",
 					type : "POST",
 					dataType : "json",
-					data : "name=" + that.name + "&galleryPath=" + data.galleryPath + "&coverPath=" + data.coverPath + "&coverFile=" + data.coverFile,
+					data : "name=" + that.name + "&galleryPath=" + data.galleryPath,
 					crossDomain : true,
 					xhrFields: {withCredentials: true},
 					success : function(data){
@@ -124,7 +124,7 @@ $.extend(Gallery.prototype,{
 		var that = this;
 		
 		$.ajax({
-			url : gp.jumpPath + "deleteGallery?name=" + that.name + "&coverFile=" + that.coverFile,
+			url : gp.jumpPath + "deleteGallery?name=" + that.name,
 			type : "DELETE",
 			dataType : "json",
 			crossDomain : true,
